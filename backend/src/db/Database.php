@@ -6,7 +6,7 @@ use App\config\DbConfig;
 use \PDO;
 class Database
 {
-    private const SQL_SCRIPT = __DIR__ . '\..\..\ascii-art-db.sql';
+    private const SQL_SCRIPT = __DIR__ . '/../../ascii-art-db.sql';
 
     private $connection;
 
