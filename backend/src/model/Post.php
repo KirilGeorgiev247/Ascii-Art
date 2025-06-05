@@ -1,189 +1,117 @@
 <?php
 
-namespace App\Model;
+namespace App\model;
 
-use App\Config\Config;
-use PDO;
+use App\db\repository\post\PostRepository;
 
 class Post
 {
     private ?int $id;
     private int $userId;
+    private string $title;
     private string $content;
+    private string $type;
+    private ?string $imagePath;
+    private ?string $asciiContent;
+    private string $visibility;
+    private int $likesCount;
     private string $createdAt;
+    private string $updatedAt;
+    private ?string $username;
 
-    /**
-     * Post constructor.
-     */
-    public function __construct(?int $id, int $userId, string $content, string $createdAt)
-    {
+    public function __construct(
+        ?int $id,
+        int $userId,
+        string $title,
+        string $content,
+        string $type = 'ascii_art',
+        ?string $imagePath = null,
+        ?string $asciiContent = null,
+        string $visibility = 'public',
+        int $likesCount = 0,
+        string $createdAt = '',
+        string $updatedAt = '',
+        ?string $username = null
+    ) {
         $this->id = $id;
         $this->userId = $userId;
+        $this->title = $title;
         $this->content = $content;
-        $this->createdAt = $createdAt;
+        $this->type = $type;
+        $this->imagePath = $imagePath;
+        $this->asciiContent = $asciiContent;
+        $this->visibility = $visibility;
+        $this->likesCount = $likesCount;
+        $this->createdAt = $createdAt ?: date('Y-m-d H:i:s');
+        $this->updatedAt = $updatedAt ?: date('Y-m-d H:i:s');
+        $this->username = $username;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
+    public function getUserId(): int { return $this->userId; }
+    public function getTitle(): string { return $this->title; }
+    public function getContent(): string { return $this->content; }
+    public function getType(): string { return $this->type; }
+    public function getImagePath(): ?string { return $this->imagePath; }
+    public function getAsciiContent(): ?string { return $this->asciiContent; }
+    public function getVisibility(): string { return $this->visibility; }
+    public function getLikesCount(): int { return $this->likesCount; }
+    public function getCreatedAt(): string { return $this->createdAt; }
+    public function getUpdatedAt(): string { return $this->updatedAt; }
+    public function getUsername(): ?string { return $this->username; }
 
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
+    public function setTitle(string $title): void { $this->title = $title; }
+    public function setContent(string $content): void { $this->content = $content; }
+    public function setType(string $type): void { $this->type = $type; }
+    public function setImagePath(?string $imagePath): void { $this->imagePath = $imagePath; }
+    public function setAsciiContent(?string $asciiContent): void { $this->asciiContent = $asciiContent; }
+    public function setVisibility(string $visibility): void { $this->visibility = $visibility; }
+    public function setUsername(?string $username): void { $this->username = $username; }
 
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): void
-    {
-        $this->content = $content;
-    }
-
-    public function getCreatedAt(): string
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Find a post by ID.
-     *
-     * @return Post|null
-     */
     public static function findById(int $id): ?self
     {
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'SELECT id, user_id, content, created_at FROM posts WHERE id = :id'
-        );
-        $stmt->execute(['id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            return new self(
-                (int)$row['id'], 
-                (int)$row['user_id'], 
-                $row['content'], 
-                $row['created_at']
-            );
-        }
-
-        return null;
+        return PostRepository::findById($id);
     }
 
-    /**
-     * Fetch recent posts for the feed.
-     *
-     * @param int $limit
-     * @return Post[]
-     */
     public static function fetchRecent(int $limit = 20): array
     {
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'SELECT id, user_id, content, created_at FROM posts ORDER BY created_at DESC LIMIT :limit'
-        );
-        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $posts = [];
-        foreach ($rows as $row) {
-            $posts[] = new self(
-                (int)$row['id'], 
-                (int)$row['user_id'], 
-                $row['content'], 
-                $row['created_at']
-            );
-        }
-
-        return $posts;
+        return PostRepository::fetchRecent($limit);
     }
 
-    /**
-     * Fetch all posts by a given user.
-     *
-     * @param int $userId
-     * @return Post[]
-     */
     public static function findByUserId(int $userId): array
     {
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'SELECT id, user_id, content, created_at FROM posts WHERE user_id = :user_id ORDER BY created_at DESC'
-        );
-        $stmt->execute(['user_id' => $userId]);
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $posts = [];
-        foreach ($rows as $row) {
-            $posts[] = new self(
-                (int)$row['id'], 
-                (int)$row['user_id'], 
-                $row['content'], 
-                $row['created_at']
-            );
-        }
-
-        return $posts;
+        return PostRepository::findByUserId($userId);
     }
 
-    /**
-     * Create a new post.
-     *
-     * @return Post
-     */
-    public static function create(int $userId, string $content): self
+    public static function getFeedForUser(int $userId, int $limit = 20): array
     {
-        $createdAt = date('Y-m-d H:i:s');
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'INSERT INTO posts (user_id, content, created_at) VALUES (:user_id, :content, :created_at)'
-        );
-        $stmt->execute([
-            'user_id'    => $userId,
-            'content'    => $content,
-            'created_at' => $createdAt
-        ]);
-
-        $id = (int)$pdo->lastInsertId();
-        return new self($id, $userId, $content, $createdAt);
+        return PostRepository::getFeedForUser($userId, $limit);
     }
 
-    /**
-     * Update an existing post.
-     */
+    public static function create(
+        int $userId,
+        string $title,
+        string $content,
+        string $type = 'ascii_art',
+        ?string $imagePath = null,
+        ?string $asciiContent = null,
+        string $visibility = 'public'
+    ): self {
+        return PostRepository::create($userId, $title, $content, $type, $imagePath, $asciiContent, $visibility);
+    }
+
     public function save(): bool
     {
-        if ($this->id === null) {
-            return false;
-        }
-
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'UPDATE posts SET content = :content WHERE id = :id'
-        );
-
-        return $stmt->execute([
-            'content' => $this->content,
-            'id'      => $this->id
-        ]);
+        return PostRepository::save($this);
     }
 
-    /**
-     * Delete a post.
-     */
     public function delete(): bool
     {
-        if ($this->id === null) {
-            return false;
-        }
+        return PostRepository::delete($this);
+    }
 
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare('DELETE FROM posts WHERE id = :id');
-        return $stmt->execute(['id' => $this->id]);
+    public function incrementLikes(): bool
+    {
+        return PostRepository::incrementLikes($this);
     }
 }

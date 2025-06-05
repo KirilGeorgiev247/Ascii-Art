@@ -4,27 +4,63 @@ namespace App\db;
 
 use App\config\DbConfig;
 use \PDO;
+use \PDOException;
+
 class Database
 {
     private const SQL_SCRIPT = __DIR__ . '/../../ascii-art-db.sql';
 
-    private $connection;
+    private static ?self $instance = null;
+    private ?PDO $connection = null;
+
+    private function __construct()
+    {
+        $db_host = DbConfig::get_setting("HOST");
+        $db_name = DbConfig::get_setting("NAME");
+        $username = DbConfig::get_setting("USERNAME");
+        $password = DbConfig::get_setting("PASSWORD");
+
+        $this->runSqlFile(self::SQL_SCRIPT, $db_host, $username, $password);
+
+        $dsn = "mysql:host=$db_host;dbname=$db_name;charset=utf8mb4";
+        try {
+            $this->connection = new PDO($dsn, $username, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        } catch (PDOException $e) {
+            throw new \RuntimeException("Database connection failed: " . $e->getMessage());
+        }
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection(): PDO
+    {
+        return $this->connection;
+    }
+
+    public function closeConnection(): void
+    {
+        $this->connection = null;
+    }
 
     public function runSqlFile(string $sql_file_path, string $db_host, string $username, string $password): void
     {
-        echo "<p>Start using method: $sql_file_path</p>";
         if (!file_exists($sql_file_path)) {
-            echo "<p>SQL file not found: $sql_file_path</p>";
             throw new \RuntimeException("SQL file not found: $sql_file_path");
         }
 
         $sql = file_get_contents($sql_file_path);
         if ($sql === false) {
-            echo "<p>Could not read SQL file: $sql_file_path</p>";
             throw new \RuntimeException("Could not read SQL file: $sql_file_path");
         }
-
-        echo "<p>Running SQL file: $sql_file_path</p>";
 
         try {
             $pdo = new PDO("mysql:host=$db_host", $username, $password);
@@ -39,25 +75,4 @@ class Database
             throw new \RuntimeException("Error running SQL file: " . $e->getMessage());
         }
     }
-
-    public function __construct()
-    {
-        $db_host = DbConfig::get_setting("HOST");
-        //$db_name = DbConfig::get_setting("NAME");
-        $username = DbConfig::get_setting("USERNAME");
-        $password = DbConfig::get_setting("PASSWORD");
-
-        $this->runSqlFile(self::SQL_SCRIPT, $db_host, $username, $password);
-    }
-
-    public function getConnection(): PDO
-    {
-        return $this->connection;
-    }
-
-    public function closeConnection(): void {
-        $this->connection = null;
-    }   
 }
-
-
