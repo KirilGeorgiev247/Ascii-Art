@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Model;
+namespace App\model;
 
-use App\Config\Config;
-use PDO;
+use App\db\repository\user\UserRepository;
+use App\service\logger\Logger;
 
 class User
 {
@@ -11,168 +11,91 @@ class User
     private string $username;
     private string $email;
     private string $passwordHash;
+    private ?string $profilePicture;
+    private ?string $bio;
     private string $createdAt;
 
-    /**
-     * User constructor.
-     */
-    public function __construct(?int $id, string $username, string $email, string $passwordHash, string $createdAt)
+    public function __construct(?int $id, string $username, string $email, string $passwordHash, ?string $profilePicture = null, ?string $bio = null, string $createdAt = '')
     {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
         $this->passwordHash = $passwordHash;
-        $this->createdAt = $createdAt;
+        $this->profilePicture = $profilePicture;
+        $this->bio = $bio;
+        $this->createdAt = $createdAt ?: date('Y-m-d H:i:s');
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
+    public function getUsername(): string { return $this->username; }
+    public function getEmail(): string { return $this->email; }
+    public function getProfilePicture(): ?string { return $this->profilePicture; }
+    public function getBio(): ?string { return $this->bio; }
+    public function getCreatedAt(): string { return $this->createdAt; }
 
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): void
-    {
-        $this->username = $username;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    public function getCreatedAt(): string
-    {
-        return $this->createdAt;
-    }
+    public function setUsername(string $username): void { $this->username = $username; }
+    public function setEmail(string $email): void { $this->email = $email; }
+    public function setProfilePicture(?string $profilePicture): void { $this->profilePicture = $profilePicture; }
+    public function setBio(?string $bio): void { $this->bio = $bio; }
 
     public function verifyPassword(string $password): bool
     {
-        return password_verify($password, $this->passwordHash);
+        $logger = Logger::getInstance();
+        $logger->debug("Password verification attempt", ['username' => $this->username]);
+        $result = password_verify($password, $this->passwordHash);
+        $logger->debug("Password verification result", [
+            'username' => $this->username,
+            'success' => $result
+        ]);
+        return $result;
     }
 
-    /**
-     * Find a user by ID.
-     */
     public static function findById(int $id): ?self
     {
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare('SELECT id, username, email, password_hash, created_at FROM users WHERE id = :id');
-        $stmt->execute(['id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            return new self(
-                (int)$row['id'], 
-                $row['username'], 
-                $row['email'], 
-                $row['password_hash'], 
-                $row['created_at']
-            );
-        }
-
-        return null;
+        return UserRepository::findById($id);
     }
 
-    /**
-     * Find a user by email.
-     */
     public static function findByEmail(string $email): ?self
     {
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare('SELECT id, username, email, password_hash, created_at FROM users WHERE email = :email');
-        $stmt->execute(['email' => $email]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            return new self(
-                (int)$row['id'], 
-                $row['username'], 
-                $row['email'], 
-                $row['password_hash'], 
-                $row['created_at']
-            );
-        }
-
-        return null;
+        return UserRepository::findByEmail($email);
     }
 
-    /**
-     * Register a new user.
-     */
+    public static function findByUsername(string $username): ?self
+    {
+        return UserRepository::findByUsername($username);
+    }
+
     public static function create(string $username, string $email, string $password): self
     {
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $createdAt = date('Y-m-d H:i:s');
-
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'INSERT INTO users (username, email, password_hash, created_at) VALUES (:username, :email, :password_hash, :created_at)'
-        );
-        $stmt->execute([
-            'username' => $username,
-            'email' => $email,
-            'password_hash' => $passwordHash,
-            'created_at' => $createdAt
-        ]);
-
-        $id = (int)$pdo->lastInsertId();
-
-        return new self($id, $username, $email, $passwordHash, $createdAt);
+        return UserRepository::create($username, $email, $password);
     }
 
-    /**
-     * Update existing user record.
-     */
     public function save(): bool
     {
-        if ($this->id === null) {
-            return false;
-        }
-
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare(
-            'UPDATE users SET username = :username, email = :email WHERE id = :id'
-        );
-
-        return $stmt->execute([
-            'username' => $this->username,
-            'email' => $this->email,
-            'id' => $this->id
-        ]);
+        return UserRepository::save($this);
     }
 
-    /**
-     * Delete user record.
-     */
-    public function delete(): bool
+    public function updatePassword(string $newPassword): bool
     {
-        if ($this->id === null) {
-            return false;
-        }
-
-        $pdo = Config::getPDO();
-        $stmt = $pdo->prepare('DELETE FROM users WHERE id = :id');
-        return $stmt->execute(['id' => $this->id]);
+        return UserRepository::updatePassword($this, $newPassword);
     }
 
-    /**
-     * Authenticate a user.
-     */
     public static function authenticate(string $email, string $password): ?self
     {
         $user = self::findByEmail($email);
         if ($user && $user->verifyPassword($password)) {
             return $user;
         }
-
         return null;
+    }
+
+    public static function getAll(int $limit = 50): array
+    {
+        return UserRepository::getAll($limit);
+    }
+
+    public static function searchByUsername(string $query): array
+    {
+        return UserRepository::searchByUsername($query);
     }
 }

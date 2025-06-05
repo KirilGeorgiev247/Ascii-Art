@@ -5,3 +5,7 @@ node_modules/
 composer.lock
 
 package-lock.json
+
+app.log
+
+.DS_Store
