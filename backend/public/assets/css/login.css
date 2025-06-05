@@ -1,0 +1,76 @@
+.auth-container {
+    max-width: 400px;
+    margin: 3rem auto;
+    text-align: center;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.card-body {
+    padding: 3rem 2rem;
+}
+
+.auth-header h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.alert {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.btn {
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.auth-links {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.auth-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ascii-art {
+    margin-top: 2rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 0.9;
+}
