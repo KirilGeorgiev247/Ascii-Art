@@ -1,0 +1,27 @@
+{
+    "name": "bayryam/ascii-art",
+    "description": "Ascii Art PHP Project",
+    "type": "project",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "App\\config\\": "config/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Bayryam",
+            "email": "dermendzhiev.bayryam@gmail.com"
+        },
+        {
+            "name": "Kiril",
+            "email": "kiril.georgiev2003@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "scripts": {
+        "start": "php -S localhost:8000 -t public"
+    }
+}

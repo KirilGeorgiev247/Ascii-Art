@@ -1,0 +1,8 @@
+CREATE DATABASE IF NOT EXISTS `ascii-art-db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `ascii-art-db`;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
