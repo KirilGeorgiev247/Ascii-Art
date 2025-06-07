@@ -31,21 +31,6 @@ ob_start();
 </head>
 
 <body>
-    <!-- <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-palette"></i>
-                ASCII Art Network - Feed
-            </div>
-            <nav class="nav-links">
-                <a href="/feed"><i class="fas fa-home"></i> Feed</a>
-                <a href="/draw"><i class="fas fa-paint-brush"></i> Draw</a>
-                <a href="/profile"><i class="fas fa-user"></i> Profile</a>
-                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </nav>
-        </div>
-    </header> -->
-
     <main class="main-container">
         <section class="create-post">
             <h3><i class="fas fa-pencil-alt"></i> Share Your ASCII Art</h3>
