@@ -150,7 +150,7 @@ class PostRepository
                 'updated_at' => $createdAt
             ]);
 
-            $id = (int)$db->getConnection()->lastInsertId();
+            $id = (int) $db->getConnection()->lastInsertId();
             return new Post($id, $userId, $title, $content, $type, $imagePath, $asciiContent, $visibility, 0, $createdAt, $createdAt);
         } catch (Exception $e) {
             $logger->logException($e, 'Post creation failed');
@@ -277,18 +277,52 @@ class PostRepository
     private static function rowToPost(array $row): Post
     {
         return new Post(
-            (int)$row['id'],
-            (int)$row['user_id'],
+            (int) $row['id'],
+            (int) $row['user_id'],
             $row['title'],
             $row['content'],
             $row['type'],
             $row['image_path'] ?? null,
             $row['ascii_content'] ?? null,
             $row['visibility'],
-            (int)$row['likes_count'],
+            (int) $row['likes_count'],
             $row['created_at'],
             $row['updated_at'],
             $row['username'] ?? null
         );
+    }
+
+    public static function searchByQuery(string $query, int $limit = 50): array
+    {
+        $logger = Logger::getInstance();
+        $logger->debug("Searching posts by query", [
+            'query' => $query,
+            'limit' => $limit
+        ]);
+
+        try {
+            $db = Database::getInstance();
+            $stmt = $db->getConnection()->prepare(
+                'SELECT p.*, u.username FROM posts p 
+             JOIN users u ON p.user_id = u.id 
+             WHERE (p.title LIKE :query OR p.content LIKE :query OR p.ascii_content LIKE :query) 
+             AND p.visibility = "public" 
+             ORDER BY p.created_at DESC LIMIT :limit'
+            );
+            $stmt->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $posts = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $post = self::rowToPost($row);
+                $post->setUsername($row['username']);
+                $posts[] = $post;
+            }
+            return $posts;
+        } catch (Exception $e) {
+            $logger->logException($e, 'Error searching posts');
+            return [];
+        }
     }
 }

@@ -3,7 +3,6 @@
     "description": "Ascii Art PHP Project",
     "type": "project",
     "require": {
-        "openswoole/core": "*"
     },
     "autoload": {
         "psr-4": {

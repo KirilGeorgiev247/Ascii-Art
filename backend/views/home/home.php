@@ -108,5 +108,5 @@ ob_start();
 </html>
 <?php
 $content = ob_get_clean();
-require_once __DIR__ . './../layout/layoup.php';
+require_once __DIR__ . '/../layout/layout.php';
 ?>
