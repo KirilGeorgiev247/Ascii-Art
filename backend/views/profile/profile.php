@@ -24,11 +24,8 @@ if (!$profileUser) {
 
 $isOwnProfile = $profileUserId === $userId;
 $userPosts = Post::findByUserId($profileUserId);
-<<<<<<< Updated upstream
-=======
 $userFriends = Friend::getFriends($profileUserId);
 $userLikes = User::getLikes($profileUserId);
->>>>>>> Stashed changes
 
 $friendshipStatus = null;
 if (!$isOwnProfile) {
@@ -77,19 +74,11 @@ ob_start();
                         <span class="stat-label">Posts</span>
                     </li>
                     <li class="stat">
-<<<<<<< Updated upstream
-                        <span class="stat-number" id="friendsCount">0</span>
-                        <span class="stat-label">Friends</span>
-                    </li>
-                    <li class="stat">
-                        <span class="stat-number" id="likesCount">0</span>
-=======
                         <span class="stat-number" id="friendsCount"><?= count($userFriends) ?></span>
                         <span class="stat-label">Friends</span>
                     </li>
                     <li class="stat">
                         <span class="stat-number" id="likesCount"><?= count($userLikes) ?></span>
->>>>>>> Stashed changes
                         <span class="stat-label">Likes</span>
                     </li>
                 </ul>
