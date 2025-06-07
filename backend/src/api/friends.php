@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../routes/web.php';
 
 use App\model\Friend;
@@ -34,21 +34,21 @@ try {
     switch ($method) {
         case 'GET':
             $userId = apiRequireAuth();
-            
+
             if (isset($_GET['pending'])) {
                 $logger->info("Fetching pending friend requests", ['user_id' => $userId]);
-                
+
                 $startTime = microtime(true);
                 $pendingRequests = Friend::getPendingRequests($userId);
                 $duration = (microtime(true) - $startTime) * 1000;
-                
+
                 $logger->logPerformance('pending_requests_fetch', $duration, [
                     'user_id' => $userId,
                     'count' => count($pendingRequests)
                 ]);
-                
+
                 // Process Friend objects returned from getPendingRequests
-                $result = array_map(function($request) {
+                $result = array_map(function ($request) {
                     // Get the user who sent the request
                     $sender = User::findById($request->getUserId());
                     return [
@@ -59,25 +59,25 @@ try {
                         'created_at' => $request->getCreatedAt()
                     ];
                 }, $pendingRequests);
-                
+
                 apiSendResponse($result);
-                
+
             } elseif (isset($_GET['check']) && isset($_GET['friend_id'])) {
-                $friendId = (int)$_GET['friend_id'];
+                $friendId = (int) $_GET['friend_id'];
                 $logger->info("Checking friendship status", [
                     'user_id' => $userId,
                     'friend_id' => $friendId
                 ]);
-                
+
                 $startTime = microtime(true);
                 $status = Friend::getFriendshipStatus($userId, $friendId);
                 $duration = (microtime(true) - $startTime) * 1000;
-                
+
                 $logger->logPerformance('friendship_status_check', $duration, [
                     'user_id' => $userId,
                     'friend_id' => $friendId
                 ]);
-                
+
                 apiSendResponse([
                     'status' => $status,
                     'are_friends' => $status === 'accepted',
@@ -85,27 +85,27 @@ try {
                     'user_id' => $userId,
                     'friend_id' => $friendId
                 ]);
-                
+
             } else {
                 $logger->info("Fetching friends list", ['user_id' => $userId]);
-                
+
                 $startTime = microtime(true);
                 $friends = Friend::getFriends($userId);
                 $duration = (microtime(true) - $startTime) * 1000;
-                
+
                 $logger->logPerformance('friends_list_fetch', $duration, [
                     'user_id' => $userId,
                     'count' => count($friends)
                 ]);
-                
+
                 // Process Friend objects returned from getFriends
-                $result = array_map(function($friend) use ($userId) {
+                $result = array_map(function ($friend) use ($userId) {
                     // Determine the friend's user ID (the one that isn't the current user)
                     $friendUserId = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
-                    
+
                     // Get the friend's user details
                     $friendUser = User::findById($friendUserId);
-                    
+
                     return [
                         'id' => $friend->getId(),
                         'user_id' => $friendUserId,
@@ -114,102 +114,153 @@ try {
                         'created_at' => $friend->getCreatedAt()
                     ];
                 }, $friends);
-                
+
                 apiSendResponse($result);
             }
             break;
-            
+
         case 'POST':
-            $userId = apiRequireAuth();
-            $input = json_decode(file_get_contents('php://input'), true);
-            
-            if (!isset($input['friend_id']) || !is_numeric($input['friend_id'])) {
-                $logger->warning("Friend request missing friend_id", ['user_id' => $userId]);
-                apiSendResponse(['error' => 'Friend ID required'], 400);
-            }
-            
-            $friendId = (int)$input['friend_id'];
-            
-            if ($userId === $friendId) {
-                $logger->warning("User attempted to friend themselves", ['user_id' => $userId]);
-                apiSendResponse(['error' => 'Cannot send friend request to yourself'], 400);
-            }
-            
-            $logger->info("Sending friend request", [
-                'user_id' => $userId,
-                'friend_id' => $friendId
-            ]);
-            
-            $startTime = microtime(true);
-            
-            // Check if friend exists
-            $friend = User::findById($friendId);
-            if (!$friend) {
-                $logger->warning("Friend request to non-existent user", [
+            // /api/friends/reject
+            if (isset($pathParts[2]) && $pathParts[2] === 'reject') {
+                $userId = apiRequireAuth();
+                $input = json_decode(file_get_contents('php://input'), true);
+
+                if (!isset($input['friend_id']) || !is_numeric($input['friend_id'])) {
+                    $logger->warning("Reject friend request missing friend_id", ['user_id' => $userId]);
+                    apiSendResponse(['error' => 'Friend ID required'], 400);
+                }
+
+                $friendId = (int) $input['friend_id'];
+
+                $logger->info("Rejecting friend request", [
                     'user_id' => $userId,
                     'friend_id' => $friendId
                 ]);
-                apiSendResponse(['error' => 'User not found'], 404);
+
+                // Remove the pending request (direction: friend sent to user)
+                $success = Friend::removeFriendship($friendId, $userId);
+                if ($success) {
+                    apiSendResponse(['success' => true, 'message' => 'Friend request rejected']);
+                } else {
+                    apiSendResponse(['error' => 'Failed to reject friend request'], 500);
+                }
+                break;
             }
-            
-            // Check if already friends or request pending
-            $status = Friend::getFriendshipStatus($userId, $friendId);
-            if ($status === 'accepted') {
-                $logger->info("Already friends", [
+
+            // /api/friends/accept
+            if (isset($pathParts[2]) && $pathParts[2] === 'accept') {
+                $userId = apiRequireAuth();
+                $input = json_decode(file_get_contents('php://input'), true);
+
+                if (!isset($input['friend_id']) || !is_numeric($input['friend_id'])) {
+                    $logger->warning("Accept friend request missing friend_id", ['user_id' => $userId]);
+                    apiSendResponse(['error' => 'Friend ID required'], 400);
+                }
+
+                $friendId = (int) $input['friend_id'];
+
+                $logger->info("Accepting friend request", [
                     'user_id' => $userId,
                     'friend_id' => $friendId
                 ]);
-                apiSendResponse(['error' => 'Already friends', 'status' => 'accepted'], 400);
-            } elseif ($status === 'pending') {
-                $logger->info("Friend request already pending", [
-                    'user_id' => $userId,
-                    'friend_id' => $friendId
-                ]);
-                apiSendResponse(['error' => 'Friend request already pending', 'status' => 'pending'], 400);
+
+                // Accept the pending request (direction: friend sent to user)
+                $accepted = Friend::acceptFriendship($userId, $friendId);
+                if ($accepted) {
+                    apiSendResponse(['success' => true, 'message' => 'Friend request accepted']);
+                } else {
+                    apiSendResponse(['error' => 'Failed to accept friend request'], 500);
+                }
+                break;
             }
-            
-            // Use addFriend instead of sendRequest
-            $result = Friend::addFriend($userId, $friendId);
-            $duration = (microtime(true) - $startTime) * 1000;
-            
-            $logger->logPerformance('friend_request_send', $duration, [
-                'user_id' => $userId,
-                'friend_id' => $friendId
-            ]);
-            
-            if ($result) {
-                $logger->info("Friend request sent successfully", [
+
+            // /api/friends/remove
+            if (isset($pathParts[2]) && $pathParts[2] === 'remove') {
+                $userId = apiRequireAuth();
+                $input = json_decode(file_get_contents('php://input'), true);
+
+                if (!isset($input['friend_id']) || !is_numeric($input['friend_id'])) {
+                    $logger->warning("Remove friend missing friend_id", ['user_id' => $userId]);
+                    apiSendResponse(['error' => 'Friend ID required'], 400);
+                }
+
+                $friendId = (int) $input['friend_id'];
+
+                $logger->info("Removing friend", [
                     'user_id' => $userId,
                     'friend_id' => $friendId
                 ]);
-                apiSendResponse(['success' => true, 'message' => 'Friend request sent']);
-            } else {
-                $logger->error("Failed to send friend request", [
-                    'user_id' => $userId,
-                    'friend_id' => $friendId
-                ]);
-                apiSendResponse(['error' => 'Failed to send friend request'], 500);
+
+                $success = Friend::removeFriendship($userId, $friendId);
+                if ($success) {
+                    apiSendResponse(['success' => true, 'message' => 'Friend removed']);
+                } else {
+                    apiSendResponse(['error' => 'Failed to remove friend'], 500);
+                }
+                break;
             }
+
+            // /api/friends/add
+            if (isset($pathParts[2]) && $pathParts[2] === 'add') {
+                $userId = apiRequireAuth();
+                $input = json_decode(file_get_contents('php://input'), true);
+
+                if (!isset($input['friend_id']) || !is_numeric($input['friend_id'])) {
+                    $logger->warning("Friend request missing friend_id", ['user_id' => $userId]);
+                    apiSendResponse(['error' => 'Friend ID required'], 400);
+                }
+
+                $friendId = (int) $input['friend_id'];
+
+                if ($userId === $friendId) {
+                    $logger->warning("User attempted to friend themselves", ['user_id' => $userId]);
+                    apiSendResponse(['error' => 'Cannot send friend request to yourself'], 400);
+                }
+
+                $logger->info("Sending friend request", [
+                    'user_id' => $userId,
+                    'friend_id' => $friendId
+                ]);
+
+                // Check if already friends or request pending
+                $status = Friend::getFriendshipStatus($userId, $friendId);
+                if ($status === 'accepted') {
+                    apiSendResponse(['error' => 'Already friends', 'status' => 'accepted'], 400);
+                } elseif ($status === 'pending') {
+                    apiSendResponse(['error' => 'Friend request already pending', 'status' => 'pending'], 400);
+                }
+
+                $result = Friend::addFriend($userId, $friendId);
+                if ($result) {
+                    apiSendResponse(['success' => true, 'message' => 'Friend request sent']);
+                } else {
+                    apiSendResponse(['error' => 'Failed to send friend request'], 500);
+                }
+                break;
+            }
+
+            // fallback
+            apiSendResponse(['error' => 'Invalid endpoint'], 404);
             break;
-            
+
         case 'PUT':
             $userId = apiRequireAuth();
             $input = json_decode(file_get_contents('php://input'), true);
-            
+
             if (!isset($input['friend_id']) || !is_numeric($input['friend_id'])) {
                 $logger->warning("Accept friend request missing friend_id", ['user_id' => $userId]);
                 apiSendResponse(['error' => 'Friend ID required'], 400);
             }
-            
-            $friendId = (int)$input['friend_id'];
-            
+
+            $friendId = (int) $input['friend_id'];
+
             $logger->info("Accepting friend request", [
                 'user_id' => $userId,
                 'friend_id' => $friendId
             ]);
-            
+
             $startTime = microtime(true);
-            
+
             // Check if request exists
             $status = Friend::getFriendshipStatus($friendId, $userId);
             if ($status !== 'pending') {
@@ -220,16 +271,16 @@ try {
                 ]);
                 apiSendResponse(['error' => 'No pending friend request found'], 400);
             }
-            
+
             // Use acceptFriendship instead of acceptRequest
             $success = Friend::acceptFriendship($userId, $friendId);
             $duration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('friend_request_accept', $duration, [
                 'user_id' => $userId,
                 'friend_id' => $friendId
             ]);
-            
+
             if ($success) {
                 $logger->info("Friend request accepted successfully", [
                     'user_id' => $userId,
@@ -244,32 +295,32 @@ try {
                 apiSendResponse(['error' => 'Failed to accept friend request'], 500);
             }
             break;
-            
+
         case 'DELETE':
             $userId = apiRequireAuth();
-            
+
             if (!isset($pathParts[2]) || !is_numeric($pathParts[2])) {
                 $logger->warning("DELETE request missing friend ID", ['path_parts' => $pathParts]);
                 apiSendResponse(['error' => 'Friend ID required'], 400);
             }
-            
-            $friendId = (int)$pathParts[2];
-            
+
+            $friendId = (int) $pathParts[2];
+
             $logger->info("Removing friend or canceling request", [
                 'user_id' => $userId,
                 'friend_id' => $friendId
             ]);
-            
+
             $startTime = microtime(true);
             // Use removeFriendship instead of removeConnection
             $success = Friend::removeFriendship($userId, $friendId);
             $duration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('friend_removal', $duration, [
                 'user_id' => $userId,
                 'friend_id' => $friendId
             ]);
-            
+
             if ($success) {
                 $logger->info("Friend removed successfully", [
                     'user_id' => $userId,
@@ -284,7 +335,7 @@ try {
                 apiSendResponse(['error' => 'Failed to remove friend'], 500);
             }
             break;
-            
+
         default:
             $logger->warning("Unsupported HTTP method for friends API", [
                 'method' => $method,

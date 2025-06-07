@@ -142,7 +142,7 @@ $router->get('/profile', function() use ($logger) {
     $logger->info("Profile page accessed (own)", [
         'user_id' => $_SESSION['user_id']
     ]);
-    (new ProfileController())->index($_SESSION['user_id']);
+    (new ProfileController())->viewUser($_SESSION['user_id']);
 });
 
 $router->get('/profile/{id}', function($id) use ($logger) {
@@ -151,7 +151,7 @@ $router->get('/profile/{id}', function($id) use ($logger) {
         'user_id' => $_SESSION['user_id'],
         'profile_id' => $id
     ]);
-    (new ProfileController())->index($id);
+    (new ProfileController())->viewUser($id);
 });
 
 $router->post('/profile/edit', function() use ($logger) {
@@ -232,6 +232,35 @@ $router->get('/api/friend-requests', function() use ($logger) {
     $logger->debug("API: Getting friend requests");
     header('Content-Type: application/json');
     (new ProfileController())->apiFriendRequests();
+});
+
+$router->get('/api/users/search', function() use ($logger) {
+    requireAuth();
+    $logger->debug("API: Searching users");
+    header('Content-Type: application/json');
+    require_once __DIR__ . '/../src/api/users.php';
+});
+
+// random
+
+$router->get('/api/users', function() {
+    require_once __DIR__ . '/../src/api/users.php';
+});
+
+$router->post('/api/friends/add', function() {
+    require_once __DIR__ . '/../src/api/friends.php';
+});
+
+$router->post('/api/friends/accept', function() {
+    require_once __DIR__ . '/../src/api/friends.php';
+});
+
+$router->post('/api/friends/reject', function() {
+    require_once __DIR__ . '/../src/api/friends.php';
+});
+
+$router->post('/api/friends/remove', function() {
+    require_once __DIR__ . '/../src/api/friends.php';
 });
 
 // Static file serving for uploads

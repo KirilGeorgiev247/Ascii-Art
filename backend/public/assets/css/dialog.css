@@ -1,0 +1,101 @@
+.custom-dialog {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.custom-dialog[hidden] {
+  display: none;
+}
+
+.custom-dialog-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  max-width: 90vw;
+  min-width: 300px;
+  text-align: center;
+  border-top: 8px solid var(--primary-color, #667eea); /* default for info */
+  transition: border-color 0.2s;
+}
+
+.custom-dialog-title {
+  margin-top: 0;
+  font-size: 2.5rem;
+  color: var(--primary-color, #667eea);
+  margin-bottom: 0.5rem;
+  display: block;
+  line-height: 1;
+}
+
+.custom-dialog-title i {
+  font-size: 2.5rem;
+  display: block;
+}
+
+.custom-dialog-message {
+  margin: 1.2rem 0 2rem 0;
+  color: #444;
+  font-size: 1rem;
+}
+
+.custom-dialog-ok {
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 2.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.custom-dialog-ok:hover {
+  background: #5a6fd8;
+}
+
+/* Success dialog */
+.dialog-success .custom-dialog-content {
+  border-top-color: #28a745;
+}
+.dialog-success .custom-dialog-title i {
+  color: #28a745;
+}
+
+/* Error dialog */
+.dialog-error .custom-dialog-content {
+  border-top-color: #dc3545;
+}
+.dialog-error .custom-dialog-title i {
+  color: #dc3545;
+}
+
+/* Info dialog (default) */
+.dialog-info .custom-dialog-content {
+  border-top-color: #667eea;
+}
+.dialog-info .custom-dialog-title i {
+  color: #667eea;
+}
+
+.custom-dialog-no {
+  background: #eee;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 2.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.custom-dialog-no:hover {
+  background: #ddd;
+}

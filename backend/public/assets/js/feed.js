@@ -174,14 +174,14 @@ function updateOnlineUsers(users) {
 function createPost() {
     const postContentElement = document.getElementById('postContent');
     if (!postContentElement) {
-        alert('Error: Could not find post content area');
+        showDialog('Could not find post content area', 'error');
         return;
     }
     
     const content = postContentElement.value.trim();
     
     if (!content) {
-        alert('Please enter some content for your post!');
+        showDialog('Please enter some content for your post!', 'error');
         return;
     }
     
@@ -247,7 +247,7 @@ function sharePost(postId) {
     const post = document.querySelector(`[data-post-id="${postId}"] .post-content`);
     if (post) {
         navigator.clipboard.writeText(post.textContent).then(() => {
-            alert('ASCII art copied to clipboard!');
+            showDialog('ASCII art copied to clipboard!', "info");
         });
     }
 }
