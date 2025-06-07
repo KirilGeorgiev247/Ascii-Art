@@ -23,10 +23,6 @@ class ProfileController
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/profile');
 
-        // TODO: check if we need this
-        // if (session_status() === PHP_SESSION_NONE) {
-        //     session_start();
-        // }
         if (!isset($_SESSION['user_id'])) {
             $logger->warning("Unauthorized access to profile - redirecting to login");
             header('Location: /login');
@@ -34,7 +30,7 @@ class ProfileController
         }
 
         $currentUserId = $_SESSION['user_id'];
-        $profileUserId = $userId ?? $currentUserId;
+        $profileUserId = $userId ?? $currentUserId; // This is the profile being viewed
         $isOwnProfile = ($currentUserId === $profileUserId);
 
         $logger->info("Loading profile", [
@@ -96,6 +92,7 @@ class ProfileController
         ]);
 
         try {
+            // FIX: Always get friends of the profile being viewed
             $friends = $this->friendRepository->getFriends($profileUserId);
             $logger->debug("Friends list loaded", [
                 'profile_user_id' => $profileUserId,
@@ -113,7 +110,7 @@ class ProfileController
             'friends_count' => count($friends)
         ]);
 
-        require_once dirname(dirname(__DIR__)) . '/views/profile.php';
+        require_once dirname(dirname(__DIR__)) . '/views/profile/profile.php';
     }
 
     public function edit()
@@ -244,7 +241,7 @@ class ProfileController
         }
 
         try {
-            $friend = $this->friendRepository->addFriend($userId, (int)$friendId);
+            $friend = $this->friendRepository->addFriend($userId, (int) $friendId);
 
             if ($friend) {
                 $logger->info("Friend request sent successfully", [
@@ -306,7 +303,7 @@ class ProfileController
         }
 
         try {
-            $success = $this->friendRepository->acceptFriendRequest($userId, (int)$friendId);
+            $success = $this->friendRepository->acceptFriendRequest($userId, (int) $friendId);
 
             if ($success) {
                 $logger->info("Friend request accepted successfully", [
@@ -368,7 +365,7 @@ class ProfileController
         }
 
         try {
-            $success = $this->friendRepository->removeFriend($userId, (int)$friendId);
+            $success = $this->friendRepository->removeFriend($userId, (int) $friendId);
 
             if ($success) {
                 $logger->info("Friend removed successfully", [
@@ -424,58 +421,58 @@ class ProfileController
             $pendingRequests = [];
         }
 
-        require_once dirname(dirname(__DIR__)) . '/views/friends.php';
+        require_once dirname(dirname(__DIR__)) . '/views/friends/friends.php';
     }
 
     public function apiFriends()
-{
-    $logger = Logger::getInstance();
+    {
+        $logger = Logger::getInstance();
 
-    if (!isset($_SESSION['user_id'])) {
-        $logger->warning("API friends: Unauthorized access attempt");
-        http_response_code(401);
-        echo json_encode(['error' => 'Unauthorized']);
-        exit;
+        if (!isset($_SESSION['user_id'])) {
+            $logger->warning("API friends: Unauthorized access attempt");
+            http_response_code(401);
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $logger->info("API friends: Fetching friends", ['user_id' => $userId]);
+
+        try {
+            $friends = $this->friendRepository->getFriends($userId);
+            header('Content-Type: application/json');
+            echo json_encode(['friends' => $friends]);
+        } catch (Exception $e) {
+            $logger->logException($e, 'API friends: Failed to fetch friends');
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to fetch friends']);
+        }
     }
 
-    $userId = $_SESSION['user_id'];
-    $logger->info("API friends: Fetching friends", ['user_id' => $userId]);
+    public function apiFriendRequests()
+    {
+        $logger = Logger::getInstance();
 
-    try {
-        $friends = $this->friendRepository->getFriends($userId);
-        header('Content-Type: application/json');
-        echo json_encode(['friends' => $friends]);
-    } catch (Exception $e) {
-        $logger->logException($e, 'API friends: Failed to fetch friends');
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch friends']);
+        if (!isset($_SESSION['user_id'])) {
+            $logger->warning("API friend requests: Unauthorized access attempt");
+            http_response_code(401);
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $logger->info("API friend requests: Fetching pending requests", ['user_id' => $userId]);
+
+        try {
+            $requests = $this->friendRepository->getPendingRequests($userId);
+            header('Content-Type: application/json');
+            echo json_encode(['requests' => $requests]);
+        } catch (Exception $e) {
+            $logger->logException($e, 'API friend requests: Failed to fetch requests');
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to fetch friend requests']);
+        }
     }
-}
-
-public function apiFriendRequests()
-{
-    $logger = Logger::getInstance();
-
-    if (!isset($_SESSION['user_id'])) {
-        $logger->warning("API friend requests: Unauthorized access attempt");
-        http_response_code(401);
-        echo json_encode(['error' => 'Unauthorized']);
-        exit;
-    }
-
-    $userId = $_SESSION['user_id'];
-    $logger->info("API friend requests: Fetching pending requests", ['user_id' => $userId]);
-
-    try {
-        $requests = $this->friendRepository->getPendingRequests($userId);
-        header('Content-Type: application/json');
-        echo json_encode(['requests' => $requests]);
-    } catch (Exception $e) {
-        $logger->logException($e, 'API friend requests: Failed to fetch requests');
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch friend requests']);
-    }
-}
 
     // TODO: delete or use
     // public function friendsList()
@@ -549,7 +546,7 @@ public function apiFriendRequests()
             'results_count' => count($users)
         ]);
 
-        require_once dirname(dirname(__DIR__)) . '/views/search_users.php';
+        require_once dirname(dirname(__DIR__)) . '/views/search/search_users.php';
     }
 
     public function viewUser($userId)

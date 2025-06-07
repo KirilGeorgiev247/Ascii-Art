@@ -83,7 +83,7 @@ class AuthController
             $logger->warning("Login page displayed with error", ['error' => $error]);
         }
         
-        require __DIR__ . '/../../../views/auth/login/login.php';
+        require __DIR__ . '/../../views/auth/login/login.php';
     }    
     
     public function register()
@@ -154,7 +154,7 @@ class AuthController
             $logger->warning("Registration page displayed with error", ['error' => $error]);
         }
         
-        require __DIR__ . '/../../../views/auth/register/register.php';
+        require __DIR__ . '/../../views/auth/register/register.php';
     }    
     
     public function logout()

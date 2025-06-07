@@ -56,6 +56,6 @@ confirm.addEventListener('input', checkPasswordMatch);
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     if (!checkPasswordStrength(password.value) || !checkPasswordMatch()) {
         e.preventDefault();
-        alert('Please ensure all password requirements are met and passwords match.');
+        showDialog('Please ensure all password requirements are met and passwords match.', 'error');
     }
 });
