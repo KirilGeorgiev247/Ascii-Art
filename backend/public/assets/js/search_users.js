@@ -197,6 +197,7 @@ function sendFriendRequest(userId) {
 }
 
 function removeFriend(userId) {
+    // TODO: Show confirmation dialog
     if (confirm('Are you sure you want to remove this friend?')) {
         fetch('/api/friends/remove', {
             method: 'POST',

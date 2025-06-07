@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     title VARCHAR(200) NOT NULL,
-    content TEXT NOT NULL,
+    content MEDIUMTEXT NOT NULL,
     type ENUM('ascii_art', 'image', 'drawing') DEFAULT 'ascii_art',
     image_path VARCHAR(500),
     ascii_content LONGTEXT,

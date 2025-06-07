@@ -5,6 +5,7 @@ use App\controller\AuthController;
 use App\controller\ProfileController;
 use App\controller\FeedController;
 use App\controller\DrawController;
+use App\controller\ConvertController;
 
 // TODO see if we should remove requireAuth and guestOnly from here
 
@@ -285,6 +286,7 @@ $router->get('/uploads/{filename}', function($filename) use ($logger) {
     }
 });
 
+// draw routes
 $router->get('/draw', function() {
     requireAuth();
     (new DrawController())->index();
@@ -296,6 +298,20 @@ $router->post('/draw/save', function() {
 $router->post('/api/draw', function() {
     requireAuth();
     require_once __DIR__ . '/../src/api/draw.php';
+});
+
+// convert routes
+$router->get('/image', function() {
+    requireAuth();
+    (new ConvertController())->index();
+});
+$router->post('/image/save', function() {
+    requireAuth();
+    (new ConvertController())->save();
+});
+$router->post('/api/convert', function() {
+    requireAuth();
+    require_once __DIR__ . '/../src/api/convert.php';
 });
 
 $logger->debug("Routes loaded successfully");
