@@ -17,20 +17,18 @@ $title = $title ?? 'ASCII Art Social Network';
 </head>
 <body>
   <?php if (isset($_SESSION['user_id'])): ?>
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-content">
-        <a href="/feed" class="navbar-brand"><i class="fas fa-palette"></i> ASCII Art Social</a>
-        <ul class="navbar-nav">
-          <li><a href="/feed" class="nav-link <?= basename($_SERVER['REQUEST_URI']) === 'feed' ? 'active' : '' ?>"><i class="fas fa-home"></i> Feed</a></li>
-          <li><a href="/draw" class="nav-link <?= basename($_SERVER['REQUEST_URI']) === 'draw' ? 'active' : '' ?>"><i class="fas fa-paint-brush"></i> Draw</a></li>
-          <li><a href="/image" class="nav-link <?= basename($_SERVER['REQUEST_URI']) === 'image' ? 'active' : '' ?>"><i class="fas fa-image"></i> Convert</a></li>
-          <li><a href="/profile" class="nav-link <?= basename($_SERVER['REQUEST_URI']) === 'profile' ? 'active' : '' ?>"><i class="fas fa-user"></i> Profile</a></li>
-          <li><a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>
-      </div>
+ <header class="header">
+    <div class="header-content">
+      <a href="/feed" class="logo"><i class="fas fa-palette"></i> ASCII Art Social - Layout</a>
+      <nav class="nav-links">
+        <a href="/feed" class="<?= basename($_SERVER['REQUEST_URI']) === 'feed' ? 'active' : '' ?>"><i class="fas fa-home"></i> Feed</a>
+        <a href="/draw" class="<?= basename($_SERVER['REQUEST_URI']) === 'draw' ? 'active' : '' ?>"><i class="fas fa-paint-brush"></i> Draw</a>
+        <a href="/image" class="<?= basename($_SERVER['REQUEST_URI']) === 'image' ? 'active' : '' ?>"><i class="fas fa-image"></i> Convert</a>
+        <a href="/profile" class="<?= basename($_SERVER['REQUEST_URI']) === 'profile' ? 'active' : '' ?>"><i class="fas fa-user"></i> Profile</a>
+        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
     </div>
-  </nav>
+  </header>
   <?php endif; ?>
 
   <main class="main-content">

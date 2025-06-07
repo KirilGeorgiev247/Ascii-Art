@@ -31,11 +31,11 @@ ob_start();
 </head>
 
 <body>
-    <header class="header">
+    <!-- <header class="header">
         <div class="header-content">
             <div class="logo">
                 <i class="fas fa-palette"></i>
-                ASCII Art Network
+                ASCII Art Network - Feed
             </div>
             <nav class="nav-links">
                 <a href="/feed"><i class="fas fa-home"></i> Feed</a>
@@ -44,7 +44,7 @@ ob_start();
                 <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </nav>
         </div>
-    </header>
+    </header> -->
 
     <main class="main-container">
         <section class="create-post">
