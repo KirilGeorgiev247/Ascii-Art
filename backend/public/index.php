@@ -7,6 +7,9 @@ use App\db\Database;
 use App\router\Router;
 use App\service\logger\Logger;
 
+//TODO maybe delete
+require_once __DIR__ . '/../routes/web.php';
+
 $logger = Logger::getInstance();
 $logger->info("Application started", [
     'request_uri' => $_SERVER['REQUEST_URI'] ?? 'unknown',

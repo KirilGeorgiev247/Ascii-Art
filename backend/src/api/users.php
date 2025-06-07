@@ -1,4 +1,5 @@
 <?php
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -9,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../routes/web.php';
 
 use App\model\User;
 use App\model\Post;
@@ -16,67 +18,22 @@ use App\service\logger\Logger;
 
 session_start();
 
-$logger = new Logger();
-
+$logger = Logger::getInstance();
 $requestStart = microtime(true);
-$logger->logRequest('users_api', $_SERVER['REQUEST_METHOD'], [
-    'uri' => $_SERVER['REQUEST_URI'],
-    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
-    'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+
+$logger->logRequest($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'] ?? '/api/users', [
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
     'session_id' => session_id(),
     'user_id' => $_SESSION['user_id'] ?? null
 ]);
-
-function sendResponse($data, $status = 200) {
-    global $logger, $requestStart;
-    
-    $duration = (microtime(true) - $requestStart) * 1000;
-    
-    $logger->logResponse($status, sprintf(
-        "Users API response - Size: %d bytes, Time: %.2fms, User: %s",
-        strlen(json_encode($data)),
-        $duration,
-        $_SESSION['user_id'] ?? 'anonymous'
-    ));
-    
-    $logger->logPerformance('users_api_request', $duration, [
-        'method' => $_SERVER['REQUEST_METHOD'],
-        'status' => $status,
-        'user_id' => $_SESSION['user_id'] ?? null
-    ]);
-    
-    http_response_code($status);
-    echo json_encode($data);
-    exit;
-}
-
-function requireAuth() {
-    global $logger;
-    
-    if (!isset($_SESSION['user_id'])) {
-        $logger->warning("Authentication required for users API", [
-            'method' => $_SERVER['REQUEST_METHOD'],
-            'uri' => $_SERVER['REQUEST_URI'],
-            'session_id' => session_id(),
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? null
-        ]);
-        sendResponse(['error' => 'Authentication required'], 401);
-    }
-    
-    $userId = $_SESSION['user_id'];
-    $logger->info("User authenticated for users API", [
-        'user_id' => $userId,
-        'method' => $_SERVER['REQUEST_METHOD']
-    ]);
-    
-    return $userId;
-}
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $pathParts = explode('/', trim($path, '/'));
 
-switch ($method) {    case 'GET':
+switch ($method) {
+    case 'GET':
         if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
             $userId = (int)$pathParts[2];
             
@@ -99,7 +56,7 @@ switch ($method) {    case 'GET':
                     'requestor_id' => $_SESSION['user_id'] ?? null,
                     'lookup_time_ms' => round($userLookupDuration, 2)
                 ]);
-                sendResponse(['error' => 'User not found'], 404);
+                apiSendResponse(['error' => 'User not found'], 404);
             }
             
             $logger->info("Fetching user posts", [
@@ -125,7 +82,7 @@ switch ($method) {    case 'GET':
                 'total_time_ms' => round($userLookupDuration + $postsDuration, 2)
             ]);
             
-            sendResponse([
+            apiSendResponse([
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
                 'email' => $user->getEmail(),
@@ -147,7 +104,7 @@ switch ($method) {    case 'GET':
             ]);
             
         } elseif (isset($_GET['current'])) {
-            $userId = requireAuth();
+            $userId = apiRequireAuth();
             
             $logger->info("Fetching current user profile", [
                 'user_id' => $userId
@@ -167,7 +124,7 @@ switch ($method) {    case 'GET':
                     'session_id' => session_id(),
                     'lookup_time_ms' => round($userLookupDuration, 2)
                 ]);
-                sendResponse(['error' => 'User not found'], 404);
+                apiSendResponse(['error' => 'User not found'], 404);
             }
             
             $startTime = microtime(true);
@@ -187,7 +144,7 @@ switch ($method) {    case 'GET':
                 'posts_time_ms' => round($postsDuration, 2)
             ]);
             
-            sendResponse([
+            apiSendResponse([
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
                 'email' => $user->getEmail(),
@@ -220,7 +177,7 @@ switch ($method) {    case 'GET':
                 $logger->warning("User search failed - empty query", [
                     'requestor_id' => $_SESSION['user_id'] ?? null
                 ]);
-                sendResponse(['error' => 'Search query required'], 400);
+                apiSendResponse(['error' => 'Search query required'], 400);
             }
             
             $logger->info("Performing user search", [
@@ -252,12 +209,13 @@ switch ($method) {    case 'GET':
                 'search_time_ms' => round($searchDuration, 2)
             ]);
             
-            sendResponse($result);
+            apiSendResponse($result);
         }
-        break;    case 'PUT':
+        break;
+    case 'PUT':
         if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
             $profileUserId = (int)$pathParts[2];
-            $currentUserId = requireAuth();
+            $currentUserId = apiRequireAuth();
             
             $logger->info("User profile update attempt", [
                 'profile_user_id' => $profileUserId,
@@ -270,7 +228,7 @@ switch ($method) {    case 'GET':
                     'current_user_id' => $currentUserId,
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? null
                 ]);
-                sendResponse(['error' => 'Unauthorized'], 403);
+                apiSendResponse(['error' => 'Unauthorized'], 403);
             }
             
             $startTime = microtime(true);
@@ -286,7 +244,7 @@ switch ($method) {    case 'GET':
                     'user_id' => $currentUserId,
                     'lookup_time_ms' => round($userLookupDuration, 2)
                 ]);
-                sendResponse(['error' => 'User not found'], 404);
+                apiSendResponse(['error' => 'User not found'], 404);
             }
             
             $input = json_decode(file_get_contents('php://input'), true);
@@ -341,7 +299,7 @@ switch ($method) {    case 'GET':
                     'save_time_ms' => round($saveDuration, 2)
                 ]);
                 
-                sendResponse([
+                apiSendResponse([
                     'id' => $user->getId(),
                     'username' => $user->getUsername(),
                     'email' => $user->getEmail(),
@@ -358,23 +316,24 @@ switch ($method) {    case 'GET':
                     'reason' => 'Database save operation failed'
                 ]);
                 
-                sendResponse(['error' => 'Failed to update profile'], 500);
+                apiSendResponse(['error' => 'Failed to update profile'], 500);
             }
         } else {
             $logger->warning("Profile update failed - missing user ID", [
                 'path_parts' => $pathParts,
                 'current_user_id' => $_SESSION['user_id'] ?? null
             ]);
-            sendResponse(['error' => 'User ID required'], 400);
+            apiSendResponse(['error' => 'User ID required'], 400);
         }
-        break;    default:
+        break;
+    default:
         $logger->warning("Unsupported HTTP method for users API", [
             'method' => $method,
             'uri' => $_SERVER['REQUEST_URI'],
             'user_id' => $_SESSION['user_id'] ?? null,
             'ip' => $_SERVER['REMOTE_ADDR'] ?? null
         ]);
-        sendResponse(['error' => 'Method not allowed'], 405);
+        apiSendResponse(['error' => 'Method not allowed'], 405);
 }
 
 $totalDuration = (microtime(true) - $requestStart) * 1000;

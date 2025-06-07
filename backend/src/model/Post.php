@@ -47,26 +47,83 @@ class Post
         $this->username = $username;
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getUserId(): int { return $this->userId; }
-    public function getTitle(): string { return $this->title; }
-    public function getContent(): string { return $this->content; }
-    public function getType(): string { return $this->type; }
-    public function getImagePath(): ?string { return $this->imagePath; }
-    public function getAsciiContent(): ?string { return $this->asciiContent; }
-    public function getVisibility(): string { return $this->visibility; }
-    public function getLikesCount(): int { return $this->likesCount; }
-    public function getCreatedAt(): string { return $this->createdAt; }
-    public function getUpdatedAt(): string { return $this->updatedAt; }
-    public function getUsername(): ?string { return $this->username; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+    public function getType(): string
+    {
+        return $this->type;
+    }
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+    public function getAsciiContent(): ?string
+    {
+        return $this->asciiContent;
+    }
+    public function getVisibility(): string
+    {
+        return $this->visibility;
+    }
+    public function getLikesCount(): int
+    {
+        return $this->likesCount;
+    }
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
+    }
+    public function getUpdatedAt(): string
+    {
+        return $this->updatedAt;
+    }
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
 
-    public function setTitle(string $title): void { $this->title = $title; }
-    public function setContent(string $content): void { $this->content = $content; }
-    public function setType(string $type): void { $this->type = $type; }
-    public function setImagePath(?string $imagePath): void { $this->imagePath = $imagePath; }
-    public function setAsciiContent(?string $asciiContent): void { $this->asciiContent = $asciiContent; }
-    public function setVisibility(string $visibility): void { $this->visibility = $visibility; }
-    public function setUsername(?string $username): void { $this->username = $username; }
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+    public function setImagePath(?string $imagePath): void
+    {
+        $this->imagePath = $imagePath;
+    }
+    public function setAsciiContent(?string $asciiContent): void
+    {
+        $this->asciiContent = $asciiContent;
+    }
+    public function setVisibility(string $visibility): void
+    {
+        $this->visibility = $visibility;
+    }
+    public function setUsername(?string $username): void
+    {
+        $this->username = $username;
+    }
 
     public static function findById(int $id): ?self
     {
@@ -113,5 +170,10 @@ class Post
     public function incrementLikes(): bool
     {
         return PostRepository::incrementLikes($this);
+    }
+
+    public static function searchByQuery(string $query, int $limit = 50): array
+    {
+        return PostRepository::searchByQuery($query, $limit);
     }
 }

@@ -6,7 +6,8 @@ use App\model\User;
 use App\service\logger\Logger;
 
 class AuthController
-{    public function showLogin()
+{    
+    public function showLogin()
     {
         $logger = Logger::getInstance();
         $logger->info("Login page requested", [
@@ -34,11 +35,10 @@ class AuthController
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/login');
-        
         // TODO: check if needed
-        // if (session_status() == PHP_SESSION_NONE) {
-        //     session_start();
-        // }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         
         $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -90,11 +90,10 @@ class AuthController
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/register');
-        
         // TODO: check if needed
-        // if (session_status() == PHP_SESSION_NONE) {
-        //     session_start();
-        // }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         
         $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -157,13 +156,16 @@ class AuthController
         
         require __DIR__ . '/../../../views/auth/register/register.php';
     }    
+    
     public function logout()
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/logout');
-        
         // TODO: check if needed
-        // session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $userId = $_SESSION['user_id'] ?? null;
         
         if ($userId) {

@@ -21,20 +21,38 @@ class Friend
         $this->createdAt = $createdAt ?: date('Y-m-d H:i:s');
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getUserId(): int { return $this->userId; }
-    public function getFriendId(): int { return $this->friendId; }
-    public function getStatus(): string { return $this->status; }
-    public function getCreatedAt(): string { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+    public function getFriendId(): int
+    {
+        return $this->friendId;
+    }
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
+    }
 
-    public function setStatus(string $status): void { $this->status = $status; }
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
 
     public static function fromRow(array $row): self
     {
         return new self(
-            isset($row['id']) ? (int)$row['id'] : null,
-            isset($row['user_id']) ? (int)$row['user_id'] : (int)$row['from_user_id'],
-            isset($row['friend_id']) ? (int)$row['friend_id'] : (int)$row['to_user_id'],
+            isset($row['id']) ? (int) $row['id'] : null,
+            isset($row['user_id']) ? (int) $row['user_id'] : (int) $row['from_user_id'],
+            isset($row['friend_id']) ? (int) $row['friend_id'] : (int) $row['to_user_id'],
             $row['status'] ?? 'pending',
             $row['created_at'] ?? ''
         );
@@ -73,5 +91,16 @@ class Friend
     public static function areFriends(int $userId, int $friendId): bool
     {
         return FriendRepository::areFriends($userId, $friendId);
+    }
+
+    public static function getFriendshipStatus(int $userId, int $friendId): string
+    {
+        $friendship = self::getFriendship($userId, $friendId);
+
+        if (!$friendship) {
+            return 'none';
+        }
+
+        return $friendship->getStatus();
     }
 }
