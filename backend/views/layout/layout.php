@@ -55,11 +55,19 @@ $minimalLayout = $minimalLayout ?? false;
   <?php endif; ?>
 
   <!-- Dialog Modal -->
-  <div id="customDialog" class="custom-dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" aria-describedby="dialogMessage" hidden>
+  <!-- <div id="customDialog" class="custom-dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" aria-describedby="dialogMessage" hidden>
     <div class="custom-dialog-content">
       <h2 id="dialogTitle" class="custom-dialog-title"></h2>
       <div id="dialogMessage" class="custom-dialog-message"></div>
       <button id="dialogOkBtn" class="custom-dialog-ok" type="button">OK</button>
+    </div>
+  </div> -->
+
+  <div id="customDialog" class="custom-dialog" hidden>
+    <div class="custom-dialog-content">
+      <div id="dialogTitle" class="custom-dialog-title"></div>
+      <div id="dialogMessage" class="custom-dialog-message"></div>
+      <button id="dialogOkBtn" class="custom-dialog-ok">OK</button>
     </div>
   </div>
 

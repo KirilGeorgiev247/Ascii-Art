@@ -99,3 +99,13 @@
 .custom-dialog-no:hover {
   background: #ddd;
 }
+
+.custom-dialog-input {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}

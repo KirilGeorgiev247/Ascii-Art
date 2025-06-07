@@ -194,20 +194,40 @@ function imageToAscii(imageData) {
 
 function saveDrawing() {
     const asciiContent = document.getElementById('asciiOutput').value;
-    const title = prompt("Enter a title for your drawing:");
-    fetch('/draw/save', {
-        method: 'POST',
-        body: new URLSearchParams({
-            title: title || 'Untitled',
-            ascii_content: asciiContent
-        })
-    })
-    .then(res => res.json())
-    .then(res => {
-        if (res.success) {
-            alert('Drawing saved and shared!');
+    showDialog(
+        "Enter a title for your drawing:",
+        "question",
+        {
+            input: true,
+            inputType: "text",
+            inputPlaceholder: "Drawing title",
+            okText: "Save",
+            cancelText: "Cancel",
+            showCancel: true,
+            onOk: function(title) {
+                if (!title || !title.trim()) {
+                    showDialog("Title is required.", "error");
+                    return;
+                }
+                fetch('/draw/save', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        title: title,
+                        ascii_content: asciiContent
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        showDialog('Drawing saved and shared!', "success");
+                    }
+                });
+            },
+            onCancel: function () {
+                // Do nothing, user cancelled
+            }
         }
-    });
+    );
 }
 
 // Optional: Load ASCII art from localStorage (for editing)

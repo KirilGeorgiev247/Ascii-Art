@@ -94,6 +94,8 @@ function editInCanvas(postId) {
 }
 
 function deletePost(postId) {
+    // TODO: Implement actual delete logic
+    // TODO: Dialog confirmation
     if (confirm('Are you sure you want to delete this post?')) {
         console.log('Delete post:', postId);
     }
