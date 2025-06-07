@@ -4,13 +4,9 @@ function showDialog(message, type = "info", options = {}) {
   const dialogMessage = document.getElementById("dialogMessage");
   const dialogOkBtn = document.getElementById("dialogOkBtn");
 
-  // Remove previous type classes
   dialog.classList.remove("dialog-success", "dialog-error", "dialog-info", "dialog-question");
-
-  // Add new type class
   dialog.classList.add(`dialog-${type}`);
 
-  // Optionally show an icon
   let icon = "";
   if (type === "success") icon = '<i class="fas fa-check-circle"></i>';
   else if (type === "error") icon = '<i class="fas fa-times-circle"></i>';
@@ -18,21 +14,37 @@ function showDialog(message, type = "info", options = {}) {
   else icon = '<i class="fas fa-info-circle"></i>';
 
   dialogTitle.innerHTML = icon;
-  dialogMessage.textContent = message;
 
-  // Remove any previous extra buttons
+  // Remove previous input/button if any
   let dialogNoBtn = document.getElementById("dialogNoBtn");
   if (dialogNoBtn) dialogNoBtn.remove();
+  let dialogInput = document.getElementById("dialogInput");
+  if (dialogInput) dialogInput.remove();
 
-  // If it's a question, add a No button
-  if (type === "question") {
-    dialogOkBtn.textContent = "Yes";
+  // Add input if requested
+  if (options.input) {
+    dialogMessage.innerHTML = `<div>${message}</div>`;
+    dialogInput = document.createElement("input");
+    dialogInput.id = "dialogInput";
+    dialogInput.className = "custom-dialog-input";
+    dialogInput.type = options.inputType || "text";
+    dialogInput.placeholder = options.inputPlaceholder || "";
+    dialogInput.value = options.inputValue || "";
+    dialogMessage.appendChild(dialogInput);
+    setTimeout(() => dialogInput.focus(), 100);
+  } else {
+    dialogMessage.textContent = message;
+  }
+
+  // Add No/Cancel button for questions
+  if (type === "question" || options.showCancel) {
+    dialogOkBtn.textContent = options.okText || "Yes";
     dialogOkBtn.classList.add("custom-dialog-yes");
     dialogNoBtn = document.createElement("button");
     dialogNoBtn.id = "dialogNoBtn";
     dialogNoBtn.type = "button";
     dialogNoBtn.className = "custom-dialog-no";
-    dialogNoBtn.textContent = "No";
+    dialogNoBtn.textContent = options.cancelText || "No";
     dialogNoBtn.style.marginLeft = "1rem";
     dialogOkBtn.after(dialogNoBtn);
 
@@ -46,7 +58,7 @@ function showDialog(message, type = "info", options = {}) {
 
     var noHandler = dialogNoBtn.onclick;
   } else {
-    dialogOkBtn.textContent = "OK";
+    dialogOkBtn.textContent = options.okText || "OK";
     dialogOkBtn.classList.remove("custom-dialog-yes");
   }
 
@@ -58,8 +70,9 @@ function showDialog(message, type = "info", options = {}) {
   }
 
   function okHandler() {
+    let inputValue = dialogInput ? dialogInput.value : undefined;
     closeDialog();
-    if (options.onOk) options.onOk();
+    if (options.onOk) options.onOk(inputValue);
   }
 
   function escListener(e) {
@@ -70,5 +83,6 @@ function showDialog(message, type = "info", options = {}) {
   document.addEventListener("keydown", escListener);
 
   dialog.removeAttribute("hidden");
-  dialogOkBtn.focus();
+  if (dialogInput) dialogInput.focus();
+  else dialogOkBtn.focus();
 }
