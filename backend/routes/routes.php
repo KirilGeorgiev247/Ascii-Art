@@ -4,6 +4,9 @@ use App\service\logger\Logger;
 use App\controller\AuthController;
 use App\controller\ProfileController;
 use App\controller\FeedController;
+use App\controller\DrawController;
+
+// TODO see if we should remove requireAuth and guestOnly from here
 
 $logger = Logger::getInstance();
 $logger->debug("Loading routes", [
@@ -282,23 +285,17 @@ $router->get('/uploads/{filename}', function($filename) use ($logger) {
     }
 });
 
-// Drawing/image processing routes (uncomment as needed)
-/*
-$router->get('/draw', function() use ($logger) {
+$router->get('/draw', function() {
     requireAuth();
-    $logger->info("Draw page accessed", [
-        'user_id' => $_SESSION['user_id']
-    ]);
     (new DrawController())->index();
 });
-
-$router->get('/image', function() use ($logger) {
+$router->post('/draw/save', function() {
     requireAuth();
-    $logger->info("Image conversion page accessed", [
-        'user_id' => $_SESSION['user_id']
-    ]);
-    require_once __DIR__ . '/../views/image.php';
+    (new DrawController())->save();
 });
-*/
+$router->post('/api/draw', function() {
+    requireAuth();
+    require_once __DIR__ . '/../src/api/draw.php';
+});
 
 $logger->debug("Routes loaded successfully");

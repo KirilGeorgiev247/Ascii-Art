@@ -161,12 +161,13 @@ body {
     background: #f8f9fa;
     padding: 1rem;
     border-radius: 10px;
-    font-family: 'Courier New', monospace;
+    font-family: 'Fira Mono', 'Fira Code', 'Courier New', monospace;
     font-size: 0.9rem;
-    white-space: pre-wrap;
+    white-space: pre;
     overflow-x: auto;
-    border: 1px solid #e1e5e9;
     margin-bottom: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .post-interactions {
