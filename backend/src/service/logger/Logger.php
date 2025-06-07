@@ -30,7 +30,7 @@ class Logger
     private function __construct()
     {
         $this->logFile = dirname(__DIR__, 2) . '/logs/app.log';
-        $this->logLevel = self::LEVEL_INFO;
+        $this->logLevel = self::LEVEL_DEBUG;
         $this->ensureLogDirectory();
     }
     

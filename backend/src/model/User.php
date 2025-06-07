@@ -2,6 +2,7 @@
 
 namespace App\model;
 
+use App\db\repository\like\LikeRepository;
 use App\db\repository\user\UserRepository;
 use App\service\logger\Logger;
 
@@ -97,5 +98,10 @@ class User
     public static function searchByUsername(string $query): array
     {
         return UserRepository::searchByUsername($query);
+    }
+
+    public static function getLikes(int $userId): array
+    {
+        return LikeRepository::getLikesByUser($userId);
     }
 }
