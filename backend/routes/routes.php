@@ -207,7 +207,7 @@ $router->get('/search/users', function() use ($logger) {
 $router->get('/api/posts', function() use ($logger) {
     $logger->debug("API: Getting posts");
     header('Content-Type: application/json');
-    require_once __DIR__ . '/../api/posts.php';
+    require_once __DIR__ . '/../src/api/posts.php';
 });
 
 $router->post('/api/posts', function() use ($logger) {
@@ -290,6 +290,14 @@ $router->post('/draw/save', function() {
 $router->post('/api/draw', function() {
     requireAuth();
     require_once __DIR__ . '/../src/api/draw.php';
+});
+
+$router->get('/test_posts', function() {
+    requireAuth();
+    $userId = $_SESSION['user_id'] ?? null;
+    $logger = Logger::getInstance();
+    $logger->debug("Testing posts for user", ['user_id' => $userId]);
+    (new FeedController())->testPosts($userId);
 });
 
 // convert routes
