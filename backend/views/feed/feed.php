@@ -12,7 +12,7 @@ use App\model\Post;
 use App\model\User;
 
 $userId = $_SESSION['user_id'];
-$posts = Post::fetchRecent(20);
+$posts = Post::getFeedForUser($userId, 20);
 $currentUser = User::findById($userId);
 
 $title = "Feed - ASCII Art Social Network";

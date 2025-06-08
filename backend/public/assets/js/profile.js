@@ -74,6 +74,7 @@ function updateConnectionStatus(connected) {
   }
 }
 
+// TODO: delete
 function likePost(postId) {
   console.log("Like post:", postId);
 }

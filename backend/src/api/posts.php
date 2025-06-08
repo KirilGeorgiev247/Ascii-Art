@@ -135,6 +135,11 @@ try {
                     'post_count' => count($posts),
                     'limit' => $limit
                 ]);
+
+                $logger->info("fetch recent 123", [
+                    'post_count' => count($posts),
+                    'limit' => $limit
+                ]);
                 
                 //TODO check fields
                 $result = array_map(function($post) {
