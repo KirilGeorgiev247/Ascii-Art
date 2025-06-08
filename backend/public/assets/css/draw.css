@@ -47,7 +47,30 @@
     height: 40px;
     border: none;
     border-radius: 50%;
+    padding: 0;
+    background: none;
+    box-shadow: none;
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+
+/* Remove the default inner border and style the color swatch for WebKit browsers */
+#colorPicker::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+#colorPicker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+/* For Firefox */
+#colorPicker::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
 }
 
 .draw-canvas-section {
