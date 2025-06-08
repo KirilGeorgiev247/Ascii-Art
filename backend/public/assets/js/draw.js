@@ -239,6 +239,41 @@ function clearCanvas() {
     if (asciiOutput) asciiOutput.value = '';
 }
 
+function downloadAscii() {
+    const asciiOutput = document.getElementById('asciiOutput');
+    const asciiContent = asciiOutput.value !== undefined ? asciiOutput.value : asciiOutput.textContent;
+    if (!asciiContent || !asciiContent.trim()) {
+        showDialog("Nothing to save!", "error");
+        return;
+    }
+    showDialog(
+        "Enter a file name for your ASCII art:",
+        "question",
+        {
+            input: true,
+            inputType: "text",
+            inputPlaceholder: "ascii-art.txt",
+            okText: "Download",
+            cancelText: "Cancel",
+            showCancel: true,
+            onOk: function(filename) {
+                filename = (filename && filename.trim()) ? filename.trim() : "ascii-art.txt";
+                if (!filename.endsWith('.txt')) filename += '.txt';
+                const blob = new Blob([asciiContent], { type: "text/plain" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+                }, 100);
+            }
+        }
+    );
+}
+
 // Optional: Load ASCII art from localStorage (for editing)
 window.addEventListener('DOMContentLoaded', () => {
     const importedArt = localStorage.getItem('importedArt');

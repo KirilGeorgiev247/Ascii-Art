@@ -33,6 +33,7 @@ ob_start();
             <button onclick="importImage()" class="tool-btn" title="Import"><i class="fas fa-file-import"></i></button>
             <button onclick="exportAscii()" class="tool-btn" title="Export ASCII"><i
                     class="fas fa-file-export"></i></button>
+            <button onclick="downloadAscii()" class="tool-btn" title="Dowmload"><i class="fas fa-download"></i></button>
             <button onclick="saveDrawing()" class="tool-btn" title="Share"><i class="fas fa-share"></i></button>
             <input type="file" id="importInput" accept="image/*" style="display:none" />
         </section>
