@@ -9,7 +9,6 @@ const height = canvas.height;
 let drawing = false;
 let pencilWidth = 3;
 
-// Initialize blank canvas
 ctx.fillStyle = '#ffffff';
 ctx.fillRect(0, 0, width, height);
 
@@ -23,7 +22,20 @@ if (pencilWidthInput && pencilWidthValue) {
 function setTool(t) {
     tool = t;
     document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.tool-btn[title="${capitalize(t)}"]`).classList.add('active');
+    document.getElementById('colorPicker').classList.remove('active');
+
+    let selector = '';
+    if (t === 'pencil') selector = '.tool-btn[title="Pencil"]';
+    else if (t === 'bucket') selector = '.tool-btn[title="Flood Fill"]';
+    else if (t === 'color') selector = '.tool-btn[title="Change Color"]';
+    if (selector) {
+        const btn = document.querySelector(selector);
+        if (btn) btn.classList.add('active');
+    }
+
+    if (t === 'color') {
+        document.getElementById('colorPicker').classList.add('active');
+    }
 }
 function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
