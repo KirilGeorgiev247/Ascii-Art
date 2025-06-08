@@ -2,13 +2,23 @@ let tool = 'pencil';
 let color = '#000000';
 const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
+const pencilWidthInput = document.getElementById('pencilWidth');
+const pencilWidthValue = document.getElementById('pencilWidthValue');
 const width = canvas.width;
 const height = canvas.height;
 let drawing = false;
+let pencilWidth = 3;
 
 // Initialize blank canvas
 ctx.fillStyle = '#ffffff';
 ctx.fillRect(0, 0, width, height);
+
+if (pencilWidthInput && pencilWidthValue) {
+    pencilWidthInput.addEventListener('input', function() {
+        pencilWidth = parseInt(this.value, 10);
+        pencilWidthValue.textContent = this.value;
+    });
+}
 
 function setTool(t) {
     tool = t;
@@ -272,6 +282,13 @@ function downloadAscii() {
             }
         }
     );
+}
+
+function handleDraw(e) {
+    if (tool !== 'pencil') return;
+    const [x, y] = getCanvasCoords(e);
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, pencilWidth, pencilWidth);
 }
 
 // Optional: Load ASCII art from localStorage (for editing)

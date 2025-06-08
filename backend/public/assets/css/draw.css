@@ -79,3 +79,14 @@
     padding: 1rem;
     margin-top: 1rem;
 }
+
+#pencilWidth {
+    accent-color: #667eea;
+    margin: 0 0.5em;
+}
+#pencilWidthValue {
+    min-width: 1.5em;
+    display: inline-block;
+    text-align: right;
+    font-family: monospace;
+}

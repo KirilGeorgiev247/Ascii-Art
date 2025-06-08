@@ -22,6 +22,11 @@ ob_start();
             <p>Use the tools below to create, import, export, and share your art!</p>
         </header>
         <section class="draw-tools">
+            <label for="pencilWidth" style="display:flex;align-items:center;gap:0.5em;">
+                <i class="fas fa-arrows-alt-h"></i>
+                <input type="range" id="pencilWidth" min="3" max="16" value="3" style="width:80px;">
+                <span id="pencilWidthValue">3</span> px
+            </label>
             <button onclick="setTool('pencil')" class="tool-btn active" title="Pencil"><i
                     class="fas fa-pencil-alt"></i></button>
             <button onclick="setTool('bucket')" class="tool-btn" title="Flood Fill"><i
