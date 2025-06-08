@@ -3,19 +3,22 @@
     margin: 2rem auto;
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
     padding: 2rem;
 }
+
 .draw-header {
     text-align: center;
     margin-bottom: 1.5rem;
 }
+
 .draw-tools {
     display: flex;
     gap: 1rem;
     justify-content: center;
     margin-bottom: 1.5rem;
 }
+
 .tool-btn {
     background: #f8f9fa;
     border: 1px solid #e1e5e9;
@@ -25,26 +28,62 @@
     cursor: pointer;
     transition: background 0.2s;
 }
-.tool-btn:hover, .tool-btn.active {
+
+.tool-btn[title="Clear Canvas"] {
+    background: #ffeaea;
+    color: #dc3545;
+}
+.tool-btn[title="Clear Canvas"]:hover {
+    background: #ffd6d6;
+}
+
+.tool-btn:hover,
+.tool-btn.active {
     background: #e1e5e9;
 }
+
 #colorPicker {
     width: 40px;
     height: 40px;
     border: none;
     border-radius: 50%;
+    padding: 0;
+    background: none;
+    box-shadow: none;
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    transition: box-shadow 0.2s;
 }
+
+/* Remove the default inner border and style the color swatch for WebKit browsers */
+#colorPicker::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+#colorPicker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+/* For Firefox */
+#colorPicker::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
 .draw-canvas-section {
     display: flex;
     justify-content: center;
     margin-bottom: 1rem;
 }
+
 #drawCanvas {
     background: #fafafa;
     border: 2px solid #667eea;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
     cursor: crosshair;
     image-rendering: pixelated;
     width: 100%;
@@ -53,6 +92,7 @@
     display: block;
     margin: 0 auto;
 }
+
 #asciiOutput {
     font-family: 'Fira Code', 'Courier New', monospace;
     font-size: 0.9rem;
@@ -61,4 +101,15 @@
     border: 1px solid #e1e5e9;
     padding: 1rem;
     margin-top: 1rem;
+}
+
+#pencilWidth {
+    accent-color: #667eea;
+    margin: 0 0.5em;
+}
+#pencilWidthValue {
+    min-width: 1.5em;
+    display: inline-block;
+    text-align: right;
+    font-family: monospace;
 }

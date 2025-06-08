@@ -2,18 +2,45 @@ let tool = 'pencil';
 let color = '#000000';
 const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
+const pencilWidthInput = document.getElementById('pencilWidth');
+const pencilWidthValue = document.getElementById('pencilWidthValue');
 const width = canvas.width;
 const height = canvas.height;
 let drawing = false;
+let pencilWidth = 3;
 
-// Initialize blank canvas
+let lastX = null, lastY = null;
+
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+
 ctx.fillStyle = '#ffffff';
 ctx.fillRect(0, 0, width, height);
+
+if (pencilWidthInput && pencilWidthValue) {
+    pencilWidthInput.addEventListener('input', function() {
+        pencilWidth = parseInt(this.value, 10);
+        pencilWidthValue.textContent = this.value;
+    });
+}
 
 function setTool(t) {
     tool = t;
     document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.tool-btn[title="${capitalize(t)}"]`).classList.add('active');
+    document.getElementById('colorPicker').classList.remove('active');
+
+    let selector = '';
+    if (t === 'pencil') selector = '.tool-btn[title="Pencil"]';
+    else if (t === 'bucket') selector = '.tool-btn[title="Flood Fill"]';
+    else if (t === 'color') selector = '.tool-btn[title="Change Color"]';
+    if (selector) {
+        const btn = document.querySelector(selector);
+        if (btn) btn.classList.add('active');
+    }
+
+    if (t === 'color') {
+        document.getElementById('colorPicker').classList.add('active');
+    }
 }
 function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
@@ -21,10 +48,17 @@ document.getElementById('colorPicker').addEventListener('input', e => color = e.
 
 canvas.addEventListener('mousedown', e => {
     drawing = true;
+    [lastX, lastY] = getCanvasCoords(e);
     handleDraw(e);
 });
-canvas.addEventListener('mouseup', () => drawing = false);
-canvas.addEventListener('mouseleave', () => drawing = false);
+canvas.addEventListener('mouseup', () => {
+    drawing = false;
+    lastX = null; lastY = null;
+});
+canvas.addEventListener('mouseleave', () => {
+    drawing = false;
+    lastX = null; lastY = null;
+});
 canvas.addEventListener('mousemove', e => {
     if (drawing && tool === 'pencil') handleDraw(e);
 });
@@ -36,8 +70,24 @@ canvas.addEventListener('click', e => {
 function handleDraw(e) {
     if (tool !== 'pencil') return;
     const [x, y] = getCanvasCoords(e);
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, 1, 1);
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = pencilWidth;
+
+    if (lastX !== null && lastY !== null) {
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    } else {
+        ctx.beginPath();
+        ctx.arc(x, y, pencilWidth / 2, 0, Math.PI * 2, true);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    lastX = x;
+    lastY = y;
 }
 
 function handleFloodFill(e) {
@@ -225,6 +275,50 @@ function saveDrawing() {
             },
             onCancel: function () {
                 // Do nothing, user cancelled
+            }
+        }
+    );
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    // If you have an ASCII output textarea, clear it too:
+    const asciiOutput = document.getElementById('asciiOutput');
+    if (asciiOutput) asciiOutput.value = '';
+}
+
+function downloadAscii() {
+    const asciiOutput = document.getElementById('asciiOutput');
+    const asciiContent = asciiOutput.value !== undefined ? asciiOutput.value : asciiOutput.textContent;
+    if (!asciiContent || !asciiContent.trim()) {
+        showDialog("Nothing to save!", "error");
+        return;
+    }
+    showDialog(
+        "Enter a file name for your ASCII art:",
+        "question",
+        {
+            input: true,
+            inputType: "text",
+            inputPlaceholder: "ascii-art.txt",
+            okText: "Download",
+            cancelText: "Cancel",
+            showCancel: true,
+            onOk: function(filename) {
+                filename = (filename && filename.trim()) ? filename.trim() : "ascii-art.txt";
+                if (!filename.endsWith('.txt')) filename += '.txt';
+                const blob = new Blob([asciiContent], { type: "text/plain" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+                }, 100);
             }
         }
     );
