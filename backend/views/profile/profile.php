@@ -45,6 +45,7 @@ ob_start();
     <title><?= htmlspecialchars($title) ?> - ASCII Art Social</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="/assets/css/profile.css" rel="stylesheet" />
+    <link href="/assets/css/zoom.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -127,8 +128,7 @@ ob_start();
                 <?php if (empty($userPosts)): ?>
                     <section class="empty-state">
                         <i class="fas fa-palette"></i>
-                        <h3><?= $isOwnProfile ? "You haven't created any ASCII art yet!" : $profileUser->getUsername() . " hasn't shared any art yet." ?>
-                        </h3>
+                        <h3><?= $isOwnProfile ? "You haven't created any ASCII art yet!" : $profileUser->getUsername() . " hasn't shared any art yet." ?></h3>
                         <?php if ($isOwnProfile): ?>
                             <p>Start creating amazing ASCII art and share it with the community!</p>
                             <a href="/draw" class="action-btn primary" style="margin-top: 1rem; display: inline-flex;">
@@ -139,32 +139,42 @@ ob_start();
                     </section>
                 <?php else: ?>
                     <?php foreach ($userPosts as $post): ?>
-                        <article class="post" data-post-id="<?= $post->getId() ?>">
+                        <?php $postId = $post->getId(); ?>
+                        <article class="post" data-post-id="<?= $postId ?>">
                             <header class="post-header">
                                 <time class="post-date" datetime="<?= date('c', strtotime($post->getCreatedAt())) ?>">
                                     <i class="fas fa-clock"></i>
                                     <?= date('M j, Y \a\t g:i A', strtotime($post->getCreatedAt())) ?>
                                 </time>
                                 <?php if ($isOwnProfile): ?>
-                                    <button class="interaction-btn" onclick="deletePost(<?= $post->getId() ?>)">
+                                    <button class="interaction-btn" onclick="deletePost(<?= $postId ?>)">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 <?php endif; ?>
                             </header>
 
-                            <pre class="post-content"><?= htmlspecialchars($post->getContent()) ?></pre>
+                            <!-- Per-post zoom slider -->
+                            <div class="zoom-control">
+                                <label for="asciiZoom-<?= $postId ?>" class="zoom-label">
+                                    <i class="fas fa-search-plus"></i> Zoom:
+                                </label>
+                                <input type="range" id="asciiZoom-<?= $postId ?>" min="0.5" max="24" value="12" step="0.5">
+                                <span id="asciiZoomValue-<?= $postId ?>">12px</span>
+                            </div>
+
+                            <pre id="asciiOutput-<?= $postId ?>" class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
 
                             <footer class="post-interactions">
                                 <div class="interaction-buttons">
-                                    <button class="interaction-btn" onclick="likePost(<?= $post->getId() ?>)">
+                                    <button class="interaction-btn" onclick="likePost(<?= $postId ?>)">
                                         <i class="fas fa-heart"></i>
-                                        <span id="likes-<?= $post->getId() ?>">0</span>
+                                        <span id="likes-<?= $postId ?>">0</span>
                                     </button>
-                                    <button class="interaction-btn" onclick="sharePost(<?= $post->getId() ?>)">
+                                    <button class="interaction-btn" onclick="sharePost(<?= $postId ?>)">
                                         <i class="fas fa-share"></i>
                                         Share
                                     </button>
-                                    <button class="interaction-btn" onclick="editInCanvas(<?= $post->getId() ?>)">
+                                    <button class="interaction-btn" onclick="editInCanvas(<?= $postId ?>)">
                                         <i class="fas fa-paint-brush"></i>
                                         Edit
                                     </button>
@@ -189,6 +199,7 @@ ob_start();
         window.profileIsOwnProfile = <?= $isOwnProfile ? 'true' : 'false' ?>;
     </script>
     <script src="/assets/js/profile.js"></script>
+    <script src="/assets/js/zoom.js"></script>
 </body>
 
 </html>
