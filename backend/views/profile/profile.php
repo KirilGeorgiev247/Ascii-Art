@@ -128,7 +128,8 @@ ob_start();
                 <?php if (empty($userPosts)): ?>
                     <section class="empty-state">
                         <i class="fas fa-palette"></i>
-                        <h3><?= $isOwnProfile ? "You haven't created any ASCII art yet!" : $profileUser->getUsername() . " hasn't shared any art yet." ?></h3>
+                        <h3><?= $isOwnProfile ? "You haven't created any ASCII art yet!" : $profileUser->getUsername() . " hasn't shared any art yet." ?>
+                        </h3>
                         <?php if ($isOwnProfile): ?>
                             <p>Start creating amazing ASCII art and share it with the community!</p>
                             <a href="/draw" class="action-btn primary" style="margin-top: 1rem; display: inline-flex;">
@@ -153,7 +154,10 @@ ob_start();
                                 <?php endif; ?>
                             </header>
 
-                            <!-- Per-post zoom slider -->
+                            <?php if ($post->getTitle()): ?>
+                                <h2 class="post-title"><?= htmlspecialchars($post->getTitle()) ?></h2>
+                            <?php endif; ?>
+
                             <div class="zoom-control">
                                 <label for="asciiZoom-<?= $postId ?>" class="zoom-label">
                                     <i class="fas fa-search-plus"></i> Zoom:
@@ -162,23 +166,19 @@ ob_start();
                                 <span id="asciiZoomValue-<?= $postId ?>">12px</span>
                             </div>
 
-                            <pre id="asciiOutput-<?= $postId ?>" class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
+                            <pre id="asciiOutput-<?= $postId ?>"
+                                class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
 
                             <footer class="post-interactions">
-                                <div class="interaction-buttons">
-                                    <button class="interaction-btn" onclick="likePost(<?= $postId ?>)">
-                                        <i class="fas fa-heart"></i>
-                                        <span id="likes-<?= $postId ?>">0</span>
-                                    </button>
-                                    <button class="interaction-btn" onclick="sharePost(<?= $postId ?>)">
-                                        <i class="fas fa-share"></i>
-                                        Share
-                                    </button>
-                                    <button class="interaction-btn" onclick="editInCanvas(<?= $postId ?>)">
-                                        <i class="fas fa-paint-brush"></i>
-                                        Edit
-                                    </button>
+                                <div class="likes-count">
+                                    <i class="fas fa-heart" style="color:#e25555"></i>
+                                    <span id="likes-<?= $postId ?>"><?= $post->getLikesCount() ?></span>
+                                    <span class="likes-label">likes</span>
                                 </div>
+                                <button class="interaction-btn" onclick="editInCanvas(<?= $postId ?>)">
+                                    <i class="fas fa-paint-brush"></i>
+                                    Edit
+                                </button>
                             </footer>
                         </article>
                     <?php endforeach; ?>
