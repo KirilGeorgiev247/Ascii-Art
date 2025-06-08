@@ -8,7 +8,8 @@ class ConvertController
 {
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE)
+            session_start();
         if (!isset($_SESSION['user_id'])) {
             header('Location: /login');
             exit;
@@ -19,26 +20,30 @@ class ConvertController
 
     public function save()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE)
+            session_start();
         if (!isset($_SESSION['user_id'])) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Not authenticated']);
             exit;
         }
+
         $userId = $_SESSION['user_id'];
         $title = $_POST['title'] ?? 'Converted ASCII Art';
         $asciiContent = $_POST['ascii_content'] ?? '';
         $imagePath = $_POST['image_path'] ?? null;
 
+        $compressedContent = base64_encode(gzcompress($asciiContent, 9));
+
         $post = Post::create(
             $userId,
             $title,
             $asciiContent,
-            'ascii_art', // type
+            'ascii_art',
             $imagePath,
-            $asciiContent,
-            'public'
+            $compressedContent,
         );
+
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'post_id' => $post->getId()]);
     }

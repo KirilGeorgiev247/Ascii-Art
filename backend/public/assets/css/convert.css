@@ -3,13 +3,73 @@
     margin: 2rem auto;
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
     padding: 2rem;
 }
+
 .convert-header {
     text-align: center;
     margin-bottom: 1.5rem;
 }
+
+.form-group {
+    width: 100%;
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.form-group label {
+    font-weight: 600;
+}
+
+.convert-btn {
+    margin-bottom: 0.5rem;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.form-group input[type="file"],
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background: #f8f9fa;
+    margin-bottom: 0.2rem;
+}
+
+.form-group input[type="file"] {
+    padding: 0.5rem 0.5rem;
+    background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.form-group input[type="file"]:focus {
+    box-shadow: none;
+}
+
+.form-group input[type="number"]::-webkit-inner-spin-button,
+.form-group input[type="number"]::-webkit-outer-spin-button {
+    accent-color: #667eea;
+}
+
 .convert-tools {
     display: flex;
     flex-direction: column;
@@ -17,19 +77,28 @@
     gap: 1rem;
     margin-bottom: 1.5rem;
 }
+
+.convert-tools form {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
 .convert-btn {
+    display: block;
+    margin: 2rem auto 0 auto;
+    padding: 0.75em 2em;
+    border-radius: 999px;
     background: #667eea;
     color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.7rem 1.5rem;
     font-size: 1.1rem;
-    cursor: pointer;
     font-weight: 600;
+    border: none;
+    cursor: pointer;
     transition: background 0.2s;
 }
+
 .convert-btn:hover {
-    background: #5a67d8;
+    background: #5a6fd8;
 }
 
 .ascii-output {
@@ -49,4 +118,42 @@
     white-space: pre;
     box-sizing: border-box;
     resize: vertical;
+}
+
+.convert-columns {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#convertForm {
+    flex: 1 1 340px;
+    max-width: 420px;
+}
+
+.algorithm-description {
+    flex: 1 1 260px;
+    max-width: 350px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem 1.2rem;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.06);
+    margin-top: 0.5rem;
+}
+
+.algorithm-description h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #667eea;
+}
+
+.algorithm-description p {
+    margin: 0.5em 0 0 0;
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.5;
 }
