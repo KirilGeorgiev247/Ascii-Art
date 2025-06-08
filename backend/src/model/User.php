@@ -53,6 +53,8 @@ class User
 
     public static function findById(int $id): ?self
     {
+        $logger = Logger::getInstance();
+        $logger->debug("Finding user by ID 123", ['id' => $id]);
         return UserRepository::findById($id);
     }
 

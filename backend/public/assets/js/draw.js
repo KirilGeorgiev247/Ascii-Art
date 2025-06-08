@@ -324,6 +324,7 @@ function downloadAscii() {
     );
 }
 
+// TODO: check if should delete
 // Optional: Load ASCII art from localStorage (for editing)
 window.addEventListener('DOMContentLoaded', () => {
     const importedArt = localStorage.getItem('importedArt');

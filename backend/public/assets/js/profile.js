@@ -90,16 +90,6 @@ function sharePost(postId) {
   }
 }
 
-function editInCanvas(postId) {
-  const post = document.querySelector(
-    `[data-post-id="${postId}"] .post-content`
-  );
-  if (post) {
-    localStorage.setItem("importedArt", post.textContent);
-    window.location.href = "/draw";
-  }
-}
-
 function deletePost(postId) {
   showDialog("Are you sure you want to delete this post?", "question", {
     okText: "Delete",
@@ -139,6 +129,20 @@ function deletePost(postId) {
     },
   });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.post').forEach(function(postElem) {
+        const postId = postElem.getAttribute('data-post-id');
+        if (!postId) return;
+        if (window.setupAsciiZoomSlider) {
+            window.setupAsciiZoomSlider(
+                'asciiOutput-' + postId,
+                'asciiZoom-' + postId,
+                'asciiZoomValue-' + postId
+            );
+        }
+    });
+});
 
 // Initialize WebSocket connection
 connectWebSocket();

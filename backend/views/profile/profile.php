@@ -14,7 +14,9 @@ use App\model\Friend;
 $userId = $_SESSION['user_id'];
 $currentUser = User::findById($userId);
 
-$profileUserId = isset($_GET['user']) ? (int) $_GET['user'] : $userId;
+if (!isset($profileUserId)) {
+    $profileUserId = $userId;
+}
 $profileUser = User::findById($profileUserId);
 
 if (!$profileUser) {
@@ -45,6 +47,7 @@ ob_start();
     <title><?= htmlspecialchars($title) ?> - ASCII Art Social</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="/assets/css/profile.css" rel="stylesheet" />
+    <link href="/assets/css/zoom.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -139,35 +142,40 @@ ob_start();
                     </section>
                 <?php else: ?>
                     <?php foreach ($userPosts as $post): ?>
-                        <article class="post" data-post-id="<?= $post->getId() ?>">
+                        <?php $postId = $post->getId(); ?>
+                        <article class="post" data-post-id="<?= $postId ?>">
                             <header class="post-header">
                                 <time class="post-date" datetime="<?= date('c', strtotime($post->getCreatedAt())) ?>">
                                     <i class="fas fa-clock"></i>
                                     <?= date('M j, Y \a\t g:i A', strtotime($post->getCreatedAt())) ?>
                                 </time>
                                 <?php if ($isOwnProfile): ?>
-                                    <button class="interaction-btn" onclick="deletePost(<?= $post->getId() ?>)">
+                                    <button class="interaction-btn" onclick="deletePost(<?= $postId ?>)">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 <?php endif; ?>
                             </header>
 
-                            <pre class="post-content"><?= htmlspecialchars($post->getContent()) ?></pre>
+                            <?php if ($post->getTitle()): ?>
+                                <h2 class="post-title"><?= htmlspecialchars($post->getTitle()) ?></h2>
+                            <?php endif; ?>
+
+                            <div class="zoom-control">
+                                <label for="asciiZoom-<?= $postId ?>" class="zoom-label">
+                                    <i class="fas fa-search-plus"></i> Zoom:
+                                </label>
+                                <input type="range" id="asciiZoom-<?= $postId ?>" min="0.5" max="24" value="12" step="0.5">
+                                <span id="asciiZoomValue-<?= $postId ?>">12px</span>
+                            </div>
+
+                            <pre id="asciiOutput-<?= $postId ?>"
+                                class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
 
                             <footer class="post-interactions">
-                                <div class="interaction-buttons">
-                                    <button class="interaction-btn" onclick="likePost(<?= $post->getId() ?>)">
-                                        <i class="fas fa-heart"></i>
-                                        <span id="likes-<?= $post->getId() ?>">0</span>
-                                    </button>
-                                    <button class="interaction-btn" onclick="sharePost(<?= $post->getId() ?>)">
-                                        <i class="fas fa-share"></i>
-                                        Share
-                                    </button>
-                                    <button class="interaction-btn" onclick="editInCanvas(<?= $post->getId() ?>)">
-                                        <i class="fas fa-paint-brush"></i>
-                                        Edit
-                                    </button>
+                                <div class="likes-count">
+                                    <i class="fas fa-heart" style="color:#e25555"></i>
+                                    <span id="likes-<?= $postId ?>"><?= $post->getLikesCount() ?></span>
+                                    <span class="likes-label">likes</span>
                                 </div>
                             </footer>
                         </article>
@@ -189,6 +197,7 @@ ob_start();
         window.profileIsOwnProfile = <?= $isOwnProfile ? 'true' : 'false' ?>;
     </script>
     <script src="/assets/js/profile.js"></script>
+    <script src="/assets/js/zoom.js"></script>
 </body>
 
 </html>
