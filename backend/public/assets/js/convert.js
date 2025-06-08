@@ -1,8 +1,17 @@
+const descriptions = {
+    sobel: "Sobel Edge Detection: Applies the Sobel operator to emphasize the edges and outlines in your image, converting the result into high-contrast ASCII art. Great for emphasizing structure and contours.",
+    color_reduce: "Reduced Colors (Color Palette Reduction): Simplifies your image by reducing the number of distinct colors before converting it to ASCII. You can control the number of colors used for a stylized effect.",
+    symbol_reduce: "Reduced Symbols (Symbol Set Reduction): Limits the ASCII output to a custom set of symbols you choose. Useful for artistic control over how detailed or abstract the final image looks.",
+    threshold: "Threshold (Binary Thresholding): Turns your image into a two-tone (light and dark) ASCII rendering by applying a brightness threshold. Pixels brighter than the threshold use one symbol, darker ones use another."
+};
+
 document.getElementById("algorithmSelect").addEventListener("change", function () {
     document.getElementById("colorsInputGroup").style.display =
         this.value === "color_reduce" ? "" : "none";
     document.getElementById("thresholdInputGroup").style.display =
         this.value === "threshold" ? "" : "none";
+    document.getElementById("algorithmDescriptionText").textContent =
+        descriptions[this.value] || "";
 });
 
 document.getElementById("convertForm").addEventListener("submit", function (e) {
@@ -74,7 +83,6 @@ function saveAsciiArt() {
                 });
             },
             onCancel: function () {
-                // Do nothing, user cancelled
             }
         }
     );

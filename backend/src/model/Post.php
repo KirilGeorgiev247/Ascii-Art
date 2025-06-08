@@ -73,7 +73,20 @@ class Post
     }
     public function getAsciiContent(): ?string
     {
-        return $this->asciiContent;
+        if (!$this->asciiContent) {
+            return null;
+        }
+
+        $decoded = base64_decode($this->asciiContent, true);
+        if ($decoded === false) {
+            return $this->asciiContent;
+        }
+
+        $decompressed = @gzuncompress($decoded);
+        if ($decompressed === false) {
+            return $decoded;
+        }
+        return $decompressed;
     }
     public function getVisibility(): string
     {

@@ -22,6 +22,9 @@
 
 .form-group label {
     font-weight: 600;
+}
+
+.convert-btn {
     margin-bottom: 0.5rem;
     color: #444;
     display: flex;
@@ -115,4 +118,42 @@
     white-space: pre;
     box-sizing: border-box;
     resize: vertical;
+}
+
+.convert-columns {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#convertForm {
+    flex: 1 1 340px;
+    max-width: 420px;
+}
+
+.algorithm-description {
+    flex: 1 1 260px;
+    max-width: 350px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem 1.2rem;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.06);
+    margin-top: 0.5rem;
+}
+
+.algorithm-description h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #667eea;
+}
+
+.algorithm-description p {
+    margin: 0.5em 0 0 0;
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.5;
 }

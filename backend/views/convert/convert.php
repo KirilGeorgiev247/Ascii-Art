@@ -23,35 +23,45 @@ ob_start();
             <p>Upload an image and choose an algorithm to convert it to ASCII art!</p>
         </header>
         <section class="convert-tools">
-    <form id="convertForm" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="imageInput"><i class="fas fa-image"></i> Select Image</label>
-            <input type="file" name="image" id="imageInput" accept="image/*" required />
-        </div>
-        <div class="form-group">
-            <label for="algorithmSelect"><i class="fas fa-cogs"></i> Algorithm</label>
-            <select name="algorithm" id="algorithmSelect">
-                <option value="sobel">Edge Detection (Sobel)</option>
-                <option value="color_reduce">Reduced Colors</option>
-                <option value="symbol_reduce">Reduced Symbols</option>
-                <option value="threshold">Threshold</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="symbolsInput"><i class="fas fa-font"></i> Symbols</label>
-            <input type="text" name="symbols" id="symbolsInput" placeholder="Symbols (e.g. @%#*+=-:. )" />
-        </div>
-        <div class="form-group" id="colorsInputGroup" style="display:none">
-            <label for="colorsInput"><i class="fas fa-palette"></i> Number of Colors</label>
-            <input type="number" name="colors" id="colorsInput" placeholder="Colors (for color reduce)" min="2" max="32" />
-        </div>
-        <div class="form-group" id="thresholdInputGroup" style="display:none">
-            <label for="thresholdInput"><i class="fas fa-adjust"></i> Threshold</label>
-            <input type="number" name="threshold" id="thresholdInput" placeholder="Threshold (for threshold)" min="0" max="255" />
-        </div>
-        <button type="submit" class="convert-btn"><i class="fas fa-magic"></i> Convert</button>
-    </form>
-</section>
+            <div class="convert-columns">
+                <form id="convertForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="imageInput"><i class="fas fa-image"></i> Select Image</label>
+                        <input type="file" name="image" id="imageInput" accept="image/*" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="algorithmSelect"><i class="fas fa-cogs"></i> Algorithm</label>
+                        <select name="algorithm" id="algorithmSelect">
+                            <option value="sobel">Edge Detection (Sobel)</option>
+                            <option value="color_reduce">Reduced Colors</option>
+                            <option value="symbol_reduce">Reduced Symbols</option>
+                            <option value="threshold">Threshold</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="symbolsInput"><i class="fas fa-font"></i> Symbols</label>
+                        <input type="text" name="symbols" id="symbolsInput" placeholder="Symbols (e.g. @%#*+=-:. )" />
+                    </div>
+                    <div class="form-group" id="colorsInputGroup" style="display:none">
+                        <label for="colorsInput"><i class="fas fa-palette"></i> Number of Colors</label>
+                        <input type="number" name="colors" id="colorsInput" placeholder="Colors (for color reduce)"
+                            min="2" max="32" />
+                    </div>
+                    <div class="form-group" id="thresholdInputGroup" style="display:none">
+                        <label for="thresholdInput"><i class="fas fa-adjust"></i> Threshold</label>
+                        <input type="number" name="threshold" id="thresholdInput"
+                            placeholder="Threshold (for threshold)" min="0" max="255" />
+                    </div>
+                    <button type="submit" class="convert-btn"><i class="fas fa-magic"></i> Convert</button>
+                </form>
+                <div class="algorithm-description" id="algorithmDescription">
+                    <h3>Algorithm Description</h3>
+                    <p id="algorithmDescriptionText">
+                        Sobel Edge Detection: Applies the Sobel operator to emphasize the edges and outlines in your image, converting the result into high-contrast ASCII art. Great for emphasizing structure and contours.
+                    </p>
+                </div>
+            </div>
+        </section>
         <section>
             <div class="zoom-control">
                 <label for="asciiZoom" class="zoom-label"><i class="fas fa-search-plus"></i> Zoom:</label>
