@@ -314,4 +314,13 @@ $router->post('/api/convert', function() {
     require_once __DIR__ . '/../src/api/convert.php';
 });
 
+$router->delete('/profile/post/{id}', function($id) use ($logger) {
+    requireAuth();
+    $logger->info("Deleting post from profile", [
+        'user_id' => $_SESSION['user_id'],
+        'post_id' => $id
+    ]);
+    (new FeedController())->deletePost($id);
+});
+
 $logger->debug("Routes loaded successfully");

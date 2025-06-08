@@ -251,7 +251,7 @@ class FeedController
         }
 
         $userId = $_SESSION['user_id'];
-        $postId = $id; // Using the route parameter instead of POST data
+        $postId = $id;
 
         if (!$postId) {
             http_response_code(400);
@@ -296,7 +296,7 @@ class FeedController
                     header('Content-Type: application/json');
                     echo json_encode(['success' => true, 'message' => 'Post deleted successfully']);
                 } else {
-                    header('Location: /feed');
+                    header('Location: /profile/' . $userId);
                 }
             } else {
                 $logger->error("Post deletion failed", [
