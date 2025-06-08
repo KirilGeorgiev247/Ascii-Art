@@ -20,6 +20,7 @@ $logger->info("Application started", [
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+date_default_timezone_set('Europe/Sofia');
 
 set_error_handler(function($severity, $message, $file, $line) use ($logger) {
     $logger->error("PHP Error: $message", [
