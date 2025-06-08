@@ -23,22 +23,35 @@ ob_start();
             <p>Upload an image and choose an algorithm to convert it to ASCII art!</p>
         </header>
         <section class="convert-tools">
-            <form id="convertForm" enctype="multipart/form-data">
-                <input type="file" name="image" id="imageInput" accept="image/*" required />
-                <select name="algorithm" id="algorithmSelect">
-                    <option value="sobel">Edge Detection (Sobel)</option>
-                    <option value="color_reduce">Reduced Colors</option>
-                    <option value="symbol_reduce">Reduced Symbols</option>
-                    <option value="threshold">Threshold</option>
-                </select>
-                <input type="text" name="symbols" id="symbolsInput" placeholder="Symbols (e.g. @%#*+=-:. )" />
-                <input type="number" name="colors" id="colorsInput" placeholder="Colors (for color reduce)" min="2"
-                    max="32" style="display:none" />
-                <input type="number" name="threshold" id="thresholdInput" placeholder="Threshold (for threshold)"
-                    min="0" max="255" style="display:none" />
-                <button type="submit" class="convert-btn"><i class="fas fa-magic"></i> Convert</button>
-            </form>
-        </section>
+    <form id="convertForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="imageInput"><i class="fas fa-image"></i> Select Image</label>
+            <input type="file" name="image" id="imageInput" accept="image/*" required />
+        </div>
+        <div class="form-group">
+            <label for="algorithmSelect"><i class="fas fa-cogs"></i> Algorithm</label>
+            <select name="algorithm" id="algorithmSelect">
+                <option value="sobel">Edge Detection (Sobel)</option>
+                <option value="color_reduce">Reduced Colors</option>
+                <option value="symbol_reduce">Reduced Symbols</option>
+                <option value="threshold">Threshold</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="symbolsInput"><i class="fas fa-font"></i> Symbols</label>
+            <input type="text" name="symbols" id="symbolsInput" placeholder="Symbols (e.g. @%#*+=-:. )" />
+        </div>
+        <div class="form-group" id="colorsInputGroup" style="display:none">
+            <label for="colorsInput"><i class="fas fa-palette"></i> Number of Colors</label>
+            <input type="number" name="colors" id="colorsInput" placeholder="Colors (for color reduce)" min="2" max="32" />
+        </div>
+        <div class="form-group" id="thresholdInputGroup" style="display:none">
+            <label for="thresholdInput"><i class="fas fa-adjust"></i> Threshold</label>
+            <input type="number" name="threshold" id="thresholdInput" placeholder="Threshold (for threshold)" min="0" max="255" />
+        </div>
+        <button type="submit" class="convert-btn"><i class="fas fa-magic"></i> Convert</button>
+    </form>
+</section>
         <section>
             <div class="zoom-control">
                 <label for="asciiZoom" class="zoom-label"><i class="fas fa-search-plus"></i> Zoom:</label>

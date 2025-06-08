@@ -1,7 +1,7 @@
 document.getElementById("algorithmSelect").addEventListener("change", function () {
-    document.getElementById("colorsInput").style.display =
+    document.getElementById("colorsInputGroup").style.display =
         this.value === "color_reduce" ? "" : "none";
-    document.getElementById("thresholdInput").style.display =
+    document.getElementById("thresholdInputGroup").style.display =
         this.value === "threshold" ? "" : "none";
 });
 
