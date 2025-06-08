@@ -13,6 +13,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../routes/web.php';
 
 use App\model\User;
+use App\model\Friend;
 use App\model\Post;
 use App\service\logger\Logger;
 
@@ -187,6 +188,7 @@ switch ($method) {
             
             $startTime = microtime(true);
             $users = User::searchByUsername($query);
+            
             $searchDuration = (microtime(true) - $startTime) * 1000;
             
             $logger->logPerformance('user_search', $searchDuration, [
@@ -199,7 +201,8 @@ switch ($method) {
                     'id' => $user->getId(),
                     'username' => $user->getUsername(),
                     'bio' => $user->getBio(),
-                    'profile_picture' => $user->getProfilePicture()
+                    'profile_picture' => $user->getProfilePicture(),
+                    'friendship_status' => Friend::getFriendshipStatus($_SESSION['user_id'] ?? null, $user->getId())
                 ];
             }, $users);
             

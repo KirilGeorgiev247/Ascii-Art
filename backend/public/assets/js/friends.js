@@ -1,21 +1,22 @@
 function showTab(tabName) {
-  // Hide all tab contents
   document.querySelectorAll(".tab-content").forEach((content) => {
     content.classList.remove("active");
   });
 
-  // Remove active class from all tabs
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.remove("active");
   });
 
-  // Show selected tab content
   document.getElementById(tabName).classList.add("active");
 
-  // Add active class to clicked tab
-  if (event && event.target) {
-    event.target.classList.add("active");
-  }
+  document.querySelectorAll(".tab").forEach((tab) => {
+    if (
+      tab.getAttribute("onclick") &&
+      tab.getAttribute("onclick").includes(`showTab('${tabName}'`)
+    ) {
+      tab.classList.add("active");
+    }
+  });
 }
 
 function searchUsers() {
@@ -66,7 +67,18 @@ function displaySearchResults(users) {
 
   resultsContainer.innerHTML = filteredUsers
     .map(
-      (user) => `
+      (user) => {
+        let actionButton = '';
+        if (user.friendship_status === 'pending') {
+          actionButton = `<button class="btn btn-secondary" disabled>
+            <i class="fas fa-clock"></i> Sent
+          </button>`;
+        } else {
+          actionButton = `<button class="btn btn-success" onclick="sendFriendRequest(${user.id})">
+            <i class="fas fa-user-plus"></i> Add Friend
+          </button>`;
+        }
+        return `
         <div class="friend-card">
           <div class="friend-avatar">
             ${user.username.charAt(0).toUpperCase()}
@@ -79,12 +91,11 @@ function displaySearchResults(users) {
             <a href="/profile/${user.id}" class="btn btn-primary">
               <i class="fas fa-eye"></i> View Profile
             </a>
-            <button class="btn btn-success" onclick="sendFriendRequest(${user.id})">
-              <i class="fas fa-user-plus"></i> Add Friend
-            </button>
+            ${actionButton}
           </div>
         </div>
-      `
+      `;
+      }
     )
     .join("");
 }
@@ -101,6 +112,7 @@ function sendFriendRequest(userId) {
     .then((data) => {
       if (data.success) {
         showDialog("Friend request sent!", "success");
+        searchUsers(); // Refresh to update button state
       } else {
         showDialog(data.error, "error");
       }
