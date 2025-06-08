@@ -304,3 +304,11 @@ body {
         margin: 1rem auto;
     }
 }
+
+.post-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 0.5em 0;
+    color: #667eea;
+    word-break: break-word;
+}

@@ -101,6 +101,10 @@ Try using tools below or visit the Draw page for collaborative editing!"></texta
                         </div>
                     </div>
 
+                    <?php if ($post->getTitle()): ?>
+                        <h2 class="post-title"><?= htmlspecialchars($post->getTitle()) ?></h2>
+                    <?php endif; ?>
+
                     <div class="post-content"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></div>
 
                     <div class="post-interactions">
