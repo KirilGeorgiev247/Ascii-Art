@@ -230,6 +230,15 @@ function saveDrawing() {
     );
 }
 
+function clearCanvas() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    // If you have an ASCII output textarea, clear it too:
+    const asciiOutput = document.getElementById('asciiOutput');
+    if (asciiOutput) asciiOutput.value = '';
+}
+
 // Optional: Load ASCII art from localStorage (for editing)
 window.addEventListener('DOMContentLoaded', () => {
     const importedArt = localStorage.getItem('importedArt');
