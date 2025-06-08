@@ -9,6 +9,7 @@ body {
     background: linear-gradient(135deg, #66eae3 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
+    color: #111; /* black base text color */
 }
 
 .container {
@@ -26,7 +27,7 @@ body {
 }
 
 .page-header h1 {
-    color: #333;
+    color: #111; /* black heading */
     font-size: 2.5rem;
     margin-bottom: 10px;
 }
@@ -44,7 +45,7 @@ body {
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    color: #666;
+    color: #111;
     transition: all 0.3s ease;
 }
 
@@ -73,6 +74,7 @@ body {
     padding: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #111;
 }
 
 .friend-card:hover {
@@ -88,7 +90,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #f8f9fa;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 15px;
@@ -97,12 +99,12 @@ body {
 .friend-name {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: #111;
     margin-bottom: 5px;
 }
 
 .friend-status {
-    color: #666;
+    color: #111;
     font-size: 14px;
     margin-bottom: 15px;
 }
@@ -127,7 +129,7 @@ body {
 
 .btn-primary {
     background: #66d2ea;
-    color: white;
+    color: #f5f6fa;
 }
 
 .btn-primary:hover {
@@ -136,7 +138,7 @@ body {
 
 .btn-success {
     background: #28a745;
-    color: white;
+    color: #f5f6fa;
 }
 
 .btn-success:hover {
@@ -145,7 +147,7 @@ body {
 
 .btn-danger {
     background: #dc3545;
-    color: white;
+    color: #f5f6fa;
 }
 
 .btn-danger:hover {
@@ -154,7 +156,7 @@ body {
 
 .btn-secondary {
     background: #6c757d;
-    color: white;
+    color: #f5f6fa;
 }
 
 .btn-secondary:hover {
@@ -164,7 +166,7 @@ body {
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: #666;
+    color: #111;
 }
 
 .empty-state i {
@@ -187,6 +189,12 @@ body {
     border: 2px solid #e1e5e9;
     border-radius: 10px;
     font-size: 16px;
+    color: #111;
+    background: #f8f9fa;
+}
+
+.search-bar input::placeholder {
+    color: #bbb;
 }
 
 .search-bar input:focus {
@@ -196,14 +204,14 @@ body {
 
 .action-btn.secondary#viewFriendsBtn {
     background: #f8f9fa;
-    color: #333;
+    color: #111;
     border: 2px solid #e1e5e9;
     margin-left: 0.5rem;
     transition: background 0.2s, color 0.2s;
 }
 .action-btn.secondary#viewFriendsBtn:hover {
     background: #e1e5e9;
-    color: #222;
+    color: #111;
 }
 
 .action-btn.secondary#viewFriendsBtn.clicked {
