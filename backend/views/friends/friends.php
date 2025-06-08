@@ -58,7 +58,7 @@ $friendUserIds[] = $_SESSION['user_id']; // Exclude yourself as well
                     <i class="fas fa-user-friends"></i>
                     <h3>No friends yet</h3>
                     <p>Start connecting with other ASCII art enthusiasts!</p>
-                    <button class="btn btn-primary" onclick="showTab('search')">
+                    <button id="findFriendsBtn" class="btn btn-primary" onclick="showTab('search')">
                         <i class="fas fa-search"></i> Find Friends
                     </button>
                 </div>
