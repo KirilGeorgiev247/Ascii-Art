@@ -9,6 +9,11 @@ const height = canvas.height;
 let drawing = false;
 let pencilWidth = 3;
 
+let lastX = null, lastY = null;
+
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+
 ctx.fillStyle = '#ffffff';
 ctx.fillRect(0, 0, width, height);
 
@@ -43,10 +48,17 @@ document.getElementById('colorPicker').addEventListener('input', e => color = e.
 
 canvas.addEventListener('mousedown', e => {
     drawing = true;
+    [lastX, lastY] = getCanvasCoords(e);
     handleDraw(e);
 });
-canvas.addEventListener('mouseup', () => drawing = false);
-canvas.addEventListener('mouseleave', () => drawing = false);
+canvas.addEventListener('mouseup', () => {
+    drawing = false;
+    lastX = null; lastY = null;
+});
+canvas.addEventListener('mouseleave', () => {
+    drawing = false;
+    lastX = null; lastY = null;
+});
 canvas.addEventListener('mousemove', e => {
     if (drawing && tool === 'pencil') handleDraw(e);
 });
@@ -58,8 +70,24 @@ canvas.addEventListener('click', e => {
 function handleDraw(e) {
     if (tool !== 'pencil') return;
     const [x, y] = getCanvasCoords(e);
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, 1, 1);
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = pencilWidth;
+
+    if (lastX !== null && lastY !== null) {
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    } else {
+        ctx.beginPath();
+        ctx.arc(x, y, pencilWidth / 2, 0, Math.PI * 2, true);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    lastX = x;
+    lastY = y;
 }
 
 function handleFloodFill(e) {
@@ -294,13 +322,6 @@ function downloadAscii() {
             }
         }
     );
-}
-
-function handleDraw(e) {
-    if (tool !== 'pencil') return;
-    const [x, y] = getCanvasCoords(e);
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, pencilWidth, pencilWidth);
 }
 
 // Optional: Load ASCII art from localStorage (for editing)
