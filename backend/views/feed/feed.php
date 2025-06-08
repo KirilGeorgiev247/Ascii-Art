@@ -1,5 +1,4 @@
 <?php
-// Feed view with real-time WebSocket integration
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -12,7 +11,7 @@ use App\model\Post;
 use App\model\User;
 
 $userId = $_SESSION['user_id'];
-$posts = Post::fetchRecent(20);
+$posts = Post::getFeedForUser($userId, 20);
 $currentUser = User::findById($userId);
 
 $title = "Feed - ASCII Art Social Network";
@@ -28,6 +27,7 @@ ob_start();
     <title><?= htmlspecialchars($title) ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="/assets/css/feed.css" rel="stylesheet">
+    <link href="/assets/css/zoom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -78,10 +78,11 @@ Try using tools below or visit the Draw page for collaborative editing!"></texta
         <section class="posts-container" id="postsContainer">
             <?php foreach ($posts as $post): ?>
                 <?php
+                $postId = $post->getId();
                 $postUser = User::findById($post->getUserId());
                 $username = $postUser ? $postUser->getUsername() : 'Unknown User';
                 ?>
-                <article class="post" data-post-id="<?= $post->getId() ?>">
+                <article class="post" data-post-id="<?= $postId ?>">
                     <div class="post-header">
                         <div class="user-info">
                             <div class="user-avatar">
@@ -95,25 +96,37 @@ Try using tools below or visit the Draw page for collaborative editing!"></texta
                             </div>
                         </div>
                         <div class="post-menu">
-                            <button class="interaction-btn" onclick="togglePostMenu(<?= $post->getId() ?>)">
+                            <button class="interaction-btn" onclick="togglePostMenu(<?= $postId ?>)">
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="post-content"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></div>
+                    <?php if ($post->getTitle()): ?>
+                        <h2 class="post-title"><?= htmlspecialchars($post->getTitle()) ?></h2>
+                    <?php endif; ?>
+
+                    <div class="zoom-control" style="margin-bottom:0.5rem;">
+                        <label for="asciiZoom-<?= $postId ?>" class="zoom-label">
+                            <i class="fas fa-search-plus"></i> Zoom:
+                        </label>
+                        <input type="range" id="asciiZoom-<?= $postId ?>" min="0.5" max="24" value="12" step="0.5">
+                        <span id="asciiZoomValue-<?= $postId ?>">12px</span>
+                    </div>
+
+                    <pre id="asciiOutput-<?= $postId ?>" class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
 
                     <div class="post-interactions">
                         <div class="interaction-buttons">
-                            <button class="interaction-btn" onclick="likePost(<?= $post->getId() ?>)">
+                            <button class="interaction-btn" onclick="likePost(<?= $postId ?>)">
                                 <i class="fas fa-heart"></i>
-                                <span id="likes-<?= $post->getId() ?>">0</span>
+                                <span id="likes-<?= $postId ?>">0</span>
                             </button>
-                            <button class="interaction-btn" onclick="sharePost(<?= $post->getId() ?>)">
+                            <button class="interaction-btn" onclick="sharePost(<?= $postId ?>)">
                                 <i class="fas fa-share"></i>
                                 Share
                             </button>
-                            <button class="interaction-btn" onclick="copyToCanvas(<?= $post->getId() ?>)">
+                            <button class="interaction-btn" onclick="copyToCanvas(<?= $postId ?>)">
                                 <i class="fas fa-paint-brush"></i>
                                 Edit
                             </button>
@@ -147,6 +160,7 @@ Try using tools below or visit the Draw page for collaborative editing!"></texta
         const username = '<?= htmlspecialchars($currentUser->getUsername()) ?>';
     </script>
     <script src="/assets/js/feed.js"></script>
+    <script src="/assets/js/zoom.js"></script>
 </body>
 
 </html>

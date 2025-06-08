@@ -87,12 +87,17 @@ class PostRepository
         try {
             $db = Database::getInstance();
             $stmt = $db->getConnection()->prepare(
-                'SELECT p.*, u.username FROM posts p 
-                 JOIN users u ON p.user_id = u.id 
-                 WHERE (p.user_id = :user_id OR 
-                       p.user_id IN (SELECT friend_id FROM friends WHERE user_id = :user_id AND status = "accepted") OR
-                       p.visibility = "public")
-                 ORDER BY p.created_at DESC LIMIT :limit'
+                'SELECT p.*, u.username FROM posts p
+             JOIN users u ON p.user_id = u.id
+             WHERE (
+                 p.user_id = :user_id
+                 OR p.user_id IN (
+                     SELECT friend_id FROM friends WHERE user_id = :user_id AND status = "accepted"
+                     UNION
+                     SELECT user_id FROM friends WHERE friend_id = :user_id AND status = "accepted"
+                 )
+             )
+             ORDER BY p.created_at DESC LIMIT :limit'
             );
             $stmt->bindValue('user_id', $userId, PDO::PARAM_INT);
             $stmt->bindValue('limit', $limit, PDO::PARAM_INT);

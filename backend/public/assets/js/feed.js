@@ -333,3 +333,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.post').forEach(function(postElem) {
+        const postId = postElem.getAttribute('data-post-id');
+        if (!postId) return;
+        if (window.setupAsciiZoomSlider) {
+            window.setupAsciiZoomSlider(
+                'asciiOutput-' + postId,
+                'asciiZoom-' + postId,
+                'asciiZoomValue-' + postId
+            );
+        }
+    });
+});
