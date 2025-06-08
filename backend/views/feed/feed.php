@@ -32,49 +32,6 @@ ob_start();
 
 <body>
     <main class="main-container">
-        <section class="create-post">
-            <h3><i class="fas fa-pencil-alt"></i> Share Your ASCII Art</h3>
-            <textarea id="postContent" placeholder="Create some ASCII art...
-    
-    ╔══════════════════╗
-    ║   Hello World!   ║
-    ╚══════════════════╝
-    
-Try using tools below or visit the Draw page for collaborative editing!"></textarea>
-            <div class="post-actions">
-                <div class="ascii-tools">
-                    <button class="tool-btn" onclick="insertTemplate('box')" title="Box Template">
-                        <i class="fas fa-square"></i>
-                    </button>
-                    <button class="tool-btn" onclick="insertTemplate('heart')" title="Heart Template">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <button class="tool-btn" onclick="insertTemplate('star')" title="Star Template">
-                        <i class="fas fa-star"></i>
-                    </button>
-                    <button class="tool-btn" onclick="showEmojiPicker()" title="ASCII Emojis">
-                        <i class="fas fa-smile"></i>
-                    </button>
-                </div>
-                <button class="post-btn" onclick="createPost()">
-                    <i class="fas fa-paper-plane"></i>
-                    Share Art
-                </button>
-            </div>
-            <div class="emoji-picker" id="emojiPicker">
-                <div class="emoji-grid">
-                    <button class="emoji-btn" onclick="insertEmoji(':)')">:)</button>
-                    <button class="emoji-btn" onclick="insertEmoji(':(')">:(</button>
-                    <button class="emoji-btn" onclick="insertEmoji(':D')">:D</button>
-                    <button class="emoji-btn" onclick="insertEmoji(':P')">:P</button>
-                    <button class="emoji-btn" onclick="insertEmoji('&lt;3')">&lt;3</button>
-                    <button class="emoji-btn" onclick="insertEmoji('(*)')">(*)</button>
-                    <button class="emoji-btn" onclick="insertEmoji('(+)')">(+)</button>
-                    <button class="emoji-btn" onclick="insertEmoji('(-)')">(-)</button>
-                </div>
-            </div>
-        </section>
-
         <section class="posts-container" id="postsContainer">
             <?php foreach ($posts as $post): ?>
                 <?php
@@ -125,10 +82,6 @@ Try using tools below or visit the Draw page for collaborative editing!"></texta
                             <button class="interaction-btn" onclick="sharePost(<?= $postId ?>)">
                                 <i class="fas fa-share"></i>
                                 Share
-                            </button>
-                            <button class="interaction-btn" onclick="copyToCanvas(<?= $postId ?>)">
-                                <i class="fas fa-paint-brush"></i>
-                                Edit
                             </button>
                         </div>
                     </div>

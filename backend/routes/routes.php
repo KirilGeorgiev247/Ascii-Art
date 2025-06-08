@@ -158,14 +158,6 @@ $router->get('/profile/{id}', function($id) use ($logger) {
     (new ProfileController())->viewUser($id);
 });
 
-$router->post('/profile/edit', function() use ($logger) {
-    requireAuth();
-    $logger->info("Editing profile", [
-        'user_id' => $_SESSION['user_id']
-    ]);
-    (new ProfileController())->edit();
-});
-
 $router->post('/profile/friend/add/{id}', function($id) use ($logger) {
     requireAuth();
     $logger->info("Sending friend request", [

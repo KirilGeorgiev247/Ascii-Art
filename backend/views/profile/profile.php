@@ -14,7 +14,9 @@ use App\model\Friend;
 $userId = $_SESSION['user_id'];
 $currentUser = User::findById($userId);
 
-$profileUserId = isset($_GET['user']) ? (int) $_GET['user'] : $userId;
+if (!isset($profileUserId)) {
+    $profileUserId = $userId;
+}
 $profileUser = User::findById($profileUserId);
 
 if (!$profileUser) {
@@ -175,10 +177,6 @@ ob_start();
                                     <span id="likes-<?= $postId ?>"><?= $post->getLikesCount() ?></span>
                                     <span class="likes-label">likes</span>
                                 </div>
-                                <button class="interaction-btn" onclick="editInCanvas(<?= $postId ?>)">
-                                    <i class="fas fa-paint-brush"></i>
-                                    Edit
-                                </button>
                             </footer>
                         </article>
                     <?php endforeach; ?>

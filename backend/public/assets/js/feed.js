@@ -145,10 +145,6 @@ function createPostElement(post) {
                     <i class="fas fa-share"></i>
                     Share
                 </button>
-                <button class="interaction-btn" onclick="copyToCanvas(${post.id})">
-                    <i class="fas fa-paint-brush"></i>
-                    Edit
-                </button>
             </div>
         </div>
     `;

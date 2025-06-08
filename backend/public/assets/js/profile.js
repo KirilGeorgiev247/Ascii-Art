@@ -90,16 +90,6 @@ function sharePost(postId) {
   }
 }
 
-function editInCanvas(postId) {
-  const post = document.querySelector(
-    `[data-post-id="${postId}"] .post-content`
-  );
-  if (post) {
-    localStorage.setItem("importedArt", post.textContent);
-    window.location.href = "/draw";
-  }
-}
-
 function deletePost(postId) {
   showDialog("Are you sure you want to delete this post?", "question", {
     okText: "Delete",
