@@ -159,7 +159,6 @@ ob_start();
                             <?php if ($post->getTitle()): ?>
                                 <h2 class="post-title"><?= htmlspecialchars($post->getTitle()) ?></h2>
                             <?php endif; ?>
-
                             <div class="zoom-control">
                                 <label for="asciiZoom-<?= $postId ?>" class="zoom-label">
                                     <i class="fas fa-search-plus"></i> Zoom:
@@ -167,7 +166,6 @@ ob_start();
                                 <input type="range" id="asciiZoom-<?= $postId ?>" min="0.5" max="24" value="12" step="0.5">
                                 <span id="asciiZoomValue-<?= $postId ?>">12px</span>
                             </div>
-
                             <pre id="asciiOutput-<?= $postId ?>"
                                 class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
 
