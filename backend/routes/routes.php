@@ -115,11 +115,16 @@ $router->post('/feed/post', function() use ($logger) {
 
 $router->post('/feed/like/{id}', function($id) use ($logger) {
     requireAuth();
-    $logger->info("Liking/unliking post", [
+    $logger->info("Like/unlike post", [
         'user_id' => $_SESSION['user_id'],
         'post_id' => $id
     ]);
-    (new FeedController())->likePost($id);
+    require_once __DIR__ . '/../src/api/likes.php';
+});
+
+$router->get('/feed/like/{id}', function($id) {
+    requireAuth();
+    require_once __DIR__ . '/../src/api/likes.php';
 });
 
 $router->delete('/feed/post/{id}', function($id) use ($logger) {

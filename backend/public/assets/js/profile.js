@@ -77,6 +77,7 @@ function updateConnectionStatus(connected) {
 // TODO: delete
 function likePost(postId) {
   console.log("Like post:", postId);
+//   sendMessage("like_post");
 }
 
 function sharePost(postId) {

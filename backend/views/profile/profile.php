@@ -81,7 +81,7 @@ ob_start();
                         <span class="stat-label">Friends</span>
                     </li>
                     <li class="stat">
-                        <span class="stat-number" id="likesCount"><?= count($userLikes) ?></span>
+                        <span class="stat-number" id="likesCount"><?= $userLikes ?></span>
                         <span class="stat-label">Likes</span>
                     </li>
                 </ul>

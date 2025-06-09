@@ -12,11 +12,6 @@ function connectWebSocket() {
       updateConnectionStatus(true);
       reconnectAttempts = 0;
 
-      // Send join message
-      sendMessage("join_feed", {
-        userId: userId,
-        username: username,
-      });
     };
 
     ws.onmessage = function (event) {
@@ -34,11 +29,6 @@ function connectWebSocket() {
     ws.onclose = function (event) {
       const data = JSON.parse(event.data);
       console.log("WebSocket disconnected:", data);
-
-      sendMessage("left_feed", {
-        userId: userId,
-        username: username,
-      });
 
       console.log("WebSocket disconnected");
       updateConnectionStatus(false);
@@ -80,36 +70,18 @@ function sendMessage(type, payload) {
 
 function handleWebSocketMessage(data) {
   switch (data.type) {
-    case "join_feed":
-      // updateOnlineUsers();
-      // updateOnlineUsers('positive');
-      console.log("Joined feed:", data.payload);
-    case "left_feed":
-      // removeOnlineUser();
-      // updateOnlineUsers('negative');
-      console.log("Left feed:", data.payload);
     case "add_post":
-      // addNewPost(data.payloadadd_post);
-      testAddPost(data.payload);
+      addPost(data.payload);
       break;
-    case "post_liked":
-      updatePostLikes(data.payload.postId, data.payload.likes);
+    case "like_post":
+      updatePostLikes(data.payload.postId, data.payload.likesCount);
       break;
-    // case "users_online":
-    //   updateOnlineUsers(data.payload.users);
-    //   break;
-    // case "user_joined":
-    //   addOnlineUser(data.payload);
-    //   break;
-    // case "user_left":
-    //   removeOnlineUser(data.payload.userId);
-    //   break;
     default:
       console.log("Unknown message type:", data.type);
   }
 }
 
-function testAddPost(post) {
+function addPost(post) {
   console.log("Tuka sme:", post);
 
   // Fetch all posts for the feed (GET /api/posts?feed=1)
@@ -311,20 +283,6 @@ function createPostElement(post) {
   return div;
 }
 
-function updateOnlineUsers(users) {
-  const usersList = document.getElementById("usersList");
-  usersList.innerHTML = "";
-
-  users.forEach((user) => {
-    const userDiv = document.createElement("div");
-    userDiv.className = "online-user";
-    userDiv.innerHTML = `
-            <div class="online-indicator"></div>
-            <span>${user.username}</span>
-        `;
-    usersList.appendChild(userDiv);
-  });
-}
 
 function createPost() {
   const postContentElement = document.getElementById("postContent");
@@ -385,10 +343,39 @@ function createPost() {
 }
 
 function likePost(postId) {
-  sendMessage("like_post", {
-    postId: postId,
-    userId: userId,
-  });
+  fetch(`/feed/like/${postId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        updatePostLikes(postId, data.likes_count);
+        toggleLikeButton(postId, data.action === "liked");
+        sendMessage("like_post", {postId, likesCount: data.likes_count});
+      } else {
+        showDialog(data.error || "Failed to like post", "error"); 
+        // on ok sendMessage
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to like post:", error);
+      showDialog("Failed to like post", "error");
+    });
+}
+
+function toggleLikeButton(postId, liked) {
+  const btn = document.getElementById(`like-btn-${postId}`);
+  if (btn) {
+    if (liked) {
+      btn.classList.add("liked");
+    } else {
+      btn.classList.remove("liked");
+    }
+  }
 }
 
 function updatePostLikes(postId, likes) {

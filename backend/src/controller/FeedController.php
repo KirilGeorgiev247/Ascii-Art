@@ -12,39 +12,6 @@ use Exception;
 
 class FeedController
 {
-    public function testPosts($userId)
-    {
-        $posts = PostRepository::getFeedForUser($userId, 20);
-        $logger = Logger::getInstance();
-        $logger->info("Testing posts for user", [
-            'user_id' => $userId,
-            'post_count' => count($posts),
-            'posts' => array_map(function ($post) {
-                return [
-                    'id' => $post->getId(),
-                    'title' => $post->getTitle(),
-                    'content' => $post->getContent(),
-                    'type' => $post->getType(),
-                    'visibility' => $post->getVisibility(),
-                    'created_at' => $post->getCreatedAt()
-                ];
-            }, $posts)
-        ]);
-
-        header('Content-Type: application/json');
-        echo json_encode(array_map(function ($post) {
-            return [
-                'id' => $post->getId(),
-                'title' => $post->getTitle(),
-                'content' => $post->getContent(),
-                'type' => $post->getType(),
-                'visibility' => $post->getVisibility(),
-                'created_at' => $post->getCreatedAt()
-            ];
-        }, $posts));
-        exit;
-    }
-
     public function index()
     {
         $logger = Logger::getInstance();
@@ -219,7 +186,7 @@ class FeedController
         }
 
         $userId = $_SESSION['user_id'];
-        $postId = $id; // Using the route parameter instead of POST data
+        $postId = $id;
 
         if (!$postId) {
             http_response_code(400);
