@@ -101,11 +101,6 @@ ob_start();
         </section>
     </main>
 
-    <aside class="online-users" id="onlineUsers">
-        <h4><i class="fas fa-users"></i> Online Now</h4>
-        <div id="usersList"></div>
-    </aside>
-
     <div class="connection-status disconnected" id="connectionStatus">
         <i class="fas fa-circle"></i>
         <span>Connecting...</span>
