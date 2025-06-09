@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 use App\model\Post;
 use App\model\User;
+use App\model\Like;
 
 $userId = $_SESSION['user_id'];
 $posts = Post::getFeedForUser($userId, 20);
@@ -38,6 +39,7 @@ ob_start();
                 $postId = $post->getId();
                 $postUser = User::findById($post->getUserId());
                 $username = $postUser ? $postUser->getUsername() : 'Unknown User';
+                $liked = Like::isPostLikedByUser($userId, $postId);
                 ?>
                 <article class="post" data-post-id="<?= $postId ?>">
                     <div class="post-header">
@@ -75,9 +77,11 @@ ob_start();
 
                     <div class="post-interactions">
                         <div class="interaction-buttons">
-                            <button class="interaction-btn" onclick="likePost(<?= $postId ?>)">
+                            <button class="interaction-btn like-btn<?= $liked ? ' liked' : '' ?>" 
+                                    id="like-btn-<?= $postId ?>"
+                                    onclick="likePost(<?= $postId ?>)">
                                 <i class="fas fa-heart"></i>
-                                <span id="likes-<?= $postId ?>">0</span>
+                                <span id="likes-<?= $postId ?>"><?= $post->getLikesCount() ?></span>
                             </button>
                             <button class="interaction-btn" onclick="sharePost(<?= $postId ?>)">
                                 <i class="fas fa-share"></i>
@@ -96,11 +100,6 @@ ob_start();
             <?php endif; ?>
         </section>
     </main>
-
-    <aside class="online-users" id="onlineUsers">
-        <h4><i class="fas fa-users"></i> Online Now</h4>
-        <div id="usersList"></div>
-    </aside>
 
     <div class="connection-status disconnected" id="connectionStatus">
         <i class="fas fa-circle"></i>

@@ -2,6 +2,7 @@
 
 namespace App\controller;
 
+use App\db\repository\post\PostRepository;
 use App\model\Post;
 use App\model\User;
 use App\model\Friend;
@@ -185,7 +186,7 @@ class FeedController
         }
 
         $userId = $_SESSION['user_id'];
-        $postId = $id; // Using the route parameter instead of POST data
+        $postId = $id;
 
         if (!$postId) {
             http_response_code(400);

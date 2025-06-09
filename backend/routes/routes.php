@@ -115,11 +115,16 @@ $router->post('/feed/post', function() use ($logger) {
 
 $router->post('/feed/like/{id}', function($id) use ($logger) {
     requireAuth();
-    $logger->info("Liking/unliking post", [
+    $logger->info("Like/unlike post", [
         'user_id' => $_SESSION['user_id'],
         'post_id' => $id
     ]);
-    (new FeedController())->likePost($id);
+    require_once __DIR__ . '/../src/api/likes.php';
+});
+
+$router->get('/feed/like/{id}', function($id) {
+    requireAuth();
+    require_once __DIR__ . '/../src/api/likes.php';
 });
 
 $router->delete('/feed/post/{id}', function($id) use ($logger) {
@@ -207,7 +212,7 @@ $router->get('/search/users', function() use ($logger) {
 $router->get('/api/posts', function() use ($logger) {
     $logger->debug("API: Getting posts");
     header('Content-Type: application/json');
-    require_once __DIR__ . '/../api/posts.php';
+    require_once __DIR__ . '/../src/api/posts.php';
 });
 
 $router->post('/api/posts', function() use ($logger) {
@@ -290,6 +295,15 @@ $router->post('/draw/save', function() {
 $router->post('/api/draw', function() {
     requireAuth();
     require_once __DIR__ . '/../src/api/draw.php';
+});
+
+$router->get('/add_posts', function() {
+    requireAuth();
+    $userId = $_SESSION['user_id'] ?? null;
+    $logger = Logger::getInstance();
+    $logger->debug("Testing posts for user", ['user_id' => $userId]);
+    require_once __DIR__ . '/../src/api/posts.php';
+    // apiSendResponse((new FeedController())->testPosts($userId));
 });
 
 // convert routes

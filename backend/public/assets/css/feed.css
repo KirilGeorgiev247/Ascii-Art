@@ -296,19 +296,16 @@ body {
     background: #f8f9fa;
 }
 
-@media (max-width: 768px) {
-    .online-users {
-        display: none;
-    }
-    .main-container {
-        margin: 1rem auto;
-    }
-}
-
 .post-title {
     font-size: 1.2rem;
     font-weight: 700;
     margin: 0 0 0.5em 0;
     color: #667eea;
     word-break: break-word;
+}
+
+.interaction-btn.liked {
+    color: #e74c3c;
+    background: #ffeaea;
+    border-color: #e74c3c;
 }

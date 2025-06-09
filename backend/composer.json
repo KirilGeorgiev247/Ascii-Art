@@ -23,6 +23,6 @@
     "minimum-stability": "stable",
     "license": "MIT",
     "scripts": {
-        "start": "php -S localhost:8000 -t public & php src/socket/websocket.php"
+        "start": "php -S localhost:8000 -t public & php src/socket/chat-server.php"
     }
 }

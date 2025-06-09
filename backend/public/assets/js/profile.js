@@ -19,16 +19,23 @@ function connectWebSocket() {
     ws.onmessage = function (event) {
       try {
         const data = JSON.parse(event.data);
+
+        console.log(data);
+
         handleWebSocketMessage(data);
       } catch (e) {
         console.error("Error parsing WebSocket message:", e);
       }
     };
 
-    ws.onclose = function () {
+    ws.onclose = function (event) {
+      const data = JSON.parse(event.data);
+      console.log("WebSocket disconnected:", data);
+
       console.log("WebSocket disconnected");
       updateConnectionStatus(false);
 
+      // Attempt to reconnect
       if (reconnectAttempts < maxReconnectAttempts) {
         setTimeout(() => {
           reconnectAttempts++;
@@ -55,11 +62,25 @@ function sendMessage(type, payload) {
         payload: payload,
       })
     );
+  } else {
+    console.warn(
+      "WebSocket not available or not open. State:",
+      ws ? ws.readyState : "null"
+    );
   }
 }
 
 function handleWebSocketMessage(data) {
-  console.log("Received message:", data);
+  switch (data.type) {
+    case "add_post":
+      addPost(data.payload);
+      break;
+    case "like_post":
+      updatePostLikes(data.payload.postId, data.payload.likesCount);
+      break;
+    default:
+      console.log("Unknown message type:", data.type);
+  }
 }
 
 function updateConnectionStatus(connected) {
@@ -77,6 +98,7 @@ function updateConnectionStatus(connected) {
 // TODO: delete
 function likePost(postId) {
   console.log("Like post:", postId);
+  //   sendMessage("like_post");
 }
 
 function sharePost(postId) {
@@ -114,6 +136,7 @@ function deletePost(postId) {
               `[data-post-id="${postId}"]`
             );
             if (postElem) postElem.remove();
+            sendMessage('add_post');
             showDialog("Post deleted successfully.", "success", {
               onOk: function () {
                 location.reload();
@@ -130,19 +153,18 @@ function deletePost(postId) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.post').forEach(function(postElem) {
-        const postId = postElem.getAttribute('data-post-id');
-        if (!postId) return;
-        if (window.setupAsciiZoomSlider) {
-            window.setupAsciiZoomSlider(
-                'asciiOutput-' + postId,
-                'asciiZoom-' + postId,
-                'asciiZoomValue-' + postId
-            );
-        }
-    });
-});
+document.addEventListener("DOMContentLoaded", function () {
+  connectWebSocket();
 
-// Initialize WebSocket connection
-connectWebSocket();
+  document.querySelectorAll(".post").forEach(function (postElem) {
+    const postId = postElem.getAttribute("data-post-id");
+    if (!postId) return;
+    if (window.setupAsciiZoomSlider) {
+      window.setupAsciiZoomSlider(
+        "asciiOutput-" + postId,
+        "asciiZoom-" + postId,
+        "asciiZoomValue-" + postId
+      );
+    }
+  });
+});

@@ -6,7 +6,10 @@ $minimalLayout = true;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['user_id'])) {
+
+$userId = $_SESSION['user_id'];
+
+if (!isset($userId)) {
     header('Location: /login');
     exit;
 }
@@ -17,9 +20,9 @@ $title = "Friends - ASCII Art Social Network";
 
 $friendUserIds = [];
 foreach ($friends as $friend) {
-    $friendUserIds[] = $friend->getUserId() == $_SESSION['user_id'] ? $friend->getFriendId() : $friend->getUserId();
+    $friendUserIds[] = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
 }
-$friendUserIds[] = $_SESSION['user_id']; // Exclude yourself as well
+$friendUserIds[] = $userId; // Exclude yourself as well
 
 ?>
 <!DOCTYPE html>
@@ -67,7 +70,7 @@ $friendUserIds[] = $_SESSION['user_id']; // Exclude yourself as well
                     <?php foreach ($friends as $friend): ?>
                         <?php
                         // Determine the friend's user ID (the one that isn't the current user)
-                        $friendUserId = $friend->getUserId() == $_SESSION['user_id'] ? $friend->getFriendId() : $friend->getUserId();
+                        $friendUserId = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
                         $friendUser = User::findById($friendUserId);
                         ?>
                         <article class="friend-card">

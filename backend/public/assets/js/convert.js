@@ -78,6 +78,7 @@ function saveAsciiArt() {
                 .then(res => res.json())
                 .then(res => {
                     if (res.success) {
+                        sendMessage('add_post');
                         showDialog('ASCII art saved and shared!', "success");
                     }
                 });
@@ -87,3 +88,60 @@ function saveAsciiArt() {
         }
     );
 }
+
+// WebSocket connection
+function connectWebSocket() {
+    try {
+        ws = new WebSocket('ws://localhost:8080');
+        
+        ws.onopen = function() {
+            console.log('Open Websocket from draw');
+            // updateConnectionStatus(true);
+            // reconnectAttempts = 0;
+            
+            // // Send join message
+            // sendMessage('join_feed', {
+            //     userId: userId,
+            //     username: username
+            // });
+        };
+        
+        ws.onmessage = function(event) {
+            console.log('Message Websocket from draw');
+        };
+        
+        ws.onclose = function(event) {
+            console.log('Close Websocket from draw');
+            
+            // Attempt to reconnect
+            if (reconnectAttempts < maxReconnectAttempts) {
+                setTimeout(() => {
+                    reconnectAttempts++;
+                    connectWebSocket();
+                }, 2000 * reconnectAttempts);
+            }
+        };
+        
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+        
+    } catch (error) {
+        console.error('Error connecting to WebSocket:', error);
+    }
+}
+
+function sendMessage(type, payload) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+            type: type,
+            payload: payload
+        }));
+    } else {
+        console.warn('WebSocket not available or not open. State:', ws ? ws.readyState : 'null');
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    connectWebSocket();
+});

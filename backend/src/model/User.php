@@ -102,8 +102,8 @@ class User
         return UserRepository::searchByUsername($query);
     }
 
-    public static function getLikes(int $userId): array
+    public static function getLikes(int $userId): int
     {
-        return LikeRepository::getLikesByUser($userId);
+        return LikeRepository::countLikesReceivedByUser($userId);
     }
 }
