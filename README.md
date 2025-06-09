@@ -1,9 +1,21 @@
-# Ascii Art
+# Ascii-Art
 
 ## Setup
 
-To run the UI use:
+To run your app you need to follow these steps:
 
 ```
-npx live-server frontend --port=5500 --open=frontend/index.html
+npm install
 ```
+
+```
+cd backend
+```
+
+```
+composer install & composer run start
+```
+
+## Prerequisites
+
++ installed npm
