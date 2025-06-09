@@ -51,6 +51,12 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $pathParts = explode('/', trim($path, '/'));
 
 try {
+
+    $logger->info("Processing posts API request", [
+        'method' => $method,
+        'path' => $path,
+        'path_parts' => $pathParts
+    ]);
     switch ($method) {
         case 'GET':
             if (isset($_GET['user_id'])) {
@@ -124,11 +130,12 @@ try {
                 
             } else {
                 // Get recent posts
+                $logger->info("vliza li tuka");
                 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
                 $logger->info("Fetching recent posts", ['limit' => $limit]);
                 
                 $startTime = microtime(true);
-                $posts = Post::fetchRecent($limit);
+                $posts = Post::getFeedForUser($userId);
                 $duration = (microtime(true) - $startTime) * 1000;
                 
                 $logger->logPerformance('recent_posts_fetch', $duration, [
@@ -156,6 +163,13 @@ try {
                         'created_at' => $post->getCreatedAt()
                     ];
                 }, $posts);
+
+                // for every post call the logger info method
+
+                // $logger->info("Recent posts fetched successfully", [
+                //     'posts' => $result,
+                //     'limit' => $limit
+                // ]);
                 
                 apiSendResponse($result);
             }

@@ -269,7 +269,7 @@ function saveDrawing() {
                 .then(res => res.json())
                 .then(res => {
                     if (res.success) {
-                        sendMessage('test_post');
+                        sendMessage('add_post');
                         showDialog('Drawing saved and shared!', "success");
                     }
                 });

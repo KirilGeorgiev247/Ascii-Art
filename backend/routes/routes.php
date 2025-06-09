@@ -292,12 +292,13 @@ $router->post('/api/draw', function() {
     require_once __DIR__ . '/../src/api/draw.php';
 });
 
-$router->get('/test_posts', function() {
+$router->get('/add_posts', function() {
     requireAuth();
     $userId = $_SESSION['user_id'] ?? null;
     $logger = Logger::getInstance();
     $logger->debug("Testing posts for user", ['user_id' => $userId]);
-    (new FeedController())->testPosts($userId);
+    require_once __DIR__ . '/../src/api/posts.php';
+    // apiSendResponse((new FeedController())->testPosts($userId));
 });
 
 // convert routes

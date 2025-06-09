@@ -122,6 +122,11 @@ function apiSendResponse($data, $status = 200) {
     ]);
     
     http_response_code($status);
+
+    $logger->debug("Tuka dali vliza", [
+        'responseData' => $responseData
+    ]);
+
     echo $responseData;
     exit;
 }

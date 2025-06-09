@@ -81,27 +81,29 @@ function sendMessage(type, payload) {
 function handleWebSocketMessage(data) {
   switch (data.type) {
     case "join_feed":
+      // updateOnlineUsers();
       // updateOnlineUsers('positive');
       console.log("Joined feed:", data.payload);
     case "left_feed":
+      // removeOnlineUser();
       // updateOnlineUsers('negative');
       console.log("Left feed:", data.payload);
-    case "test_post":
-      // addNewPost(data.payload);
+    case "add_post":
+      // addNewPost(data.payloadadd_post);
       testAddPost(data.payload);
       break;
     case "post_liked":
       updatePostLikes(data.payload.postId, data.payload.likes);
       break;
-    case "users_online":
-      updateOnlineUsers(data.payload.users);
-      break;
-    case "user_joined":
-      addOnlineUser(data.payload);
-      break;
-    case "user_left":
-      removeOnlineUser(data.payload.userId);
-      break;
+    // case "users_online":
+    //   updateOnlineUsers(data.payload.users);
+    //   break;
+    // case "user_joined":
+    //   addOnlineUser(data.payload);
+    //   break;
+    // case "user_left":
+    //   removeOnlineUser(data.payload.userId);
+    //   break;
     default:
       console.log("Unknown message type:", data.type);
   }
@@ -111,15 +113,22 @@ function testAddPost(post) {
   console.log("Tuka sme:", post);
 
   // Fetch all posts for the feed (GET /api/posts?feed=1)
-  fetch("/test_posts", {
+  fetch("/add_posts", {
     method: "GET",
+    headers: {
+      Accept: "application/json", // Optional but good to include
+    },
   })
     .then((response) => {
-      console.log("Ayde responsa:", JSON.stringify(response));
-      console.log("Ayde responsa:" + response.status);
-      console.log("Ayde responsa:" + response.json);
+      // console.log('Response from add_posts -> ' + response.json());
+      // console.log(response);
+      return response.json();
+      //   console.log("Ayde responsa:", JSON.stringify(response));
+      //   console.log("Ayde responsa:" + response.status);
+      //   console.log("Ayde responsa:" + response.json);
     })
     .then((posts) => {
+      console.log("Posts fetched:", posts);
       overwriteFeedWithPosts(posts);
     })
     .catch((error) => {
@@ -137,85 +146,87 @@ function overwriteFeedWithPosts(posts) {
     const postElement = createFeedPostElement(post);
     container.appendChild(postElement);
   });
+
+  // Reinitialize zoom sliders for all posts
+  posts.forEach((post) => {
+    if (window.setupAsciiZoomSlider) {
+      window.setupAsciiZoomSlider(
+        `asciiOutput-${post.id}`,
+        `asciiZoom-${post.id}`,
+        `asciiZoomValue-${post.id}`
+      );
+    }
+  });
 }
 
-// Helper to create a post element matching feed.php HTML
 function createFeedPostElement(post) {
-  const article = document.createElement("article");
-  article.className = "post";
-  article.setAttribute("data-post-id", post.id);
+  const postId = post.id;
+  const username = post.username || "Unknown User";
+  const avatar = username.charAt(0).toUpperCase();
+  const titleHtml = post.title
+    ? `<h2 class="post-title">${escapeHtml(post.title)}</h2>`
+    : "";
 
-  // User avatar (first letter)
-  const avatar = document.createElement("div");
-  avatar.className = "user-avatar";
-  avatar.textContent = post.username
-    ? post.username.charAt(0).toUpperCase()
-    : "U";
+  const element = document.createElement("article");
+  element.className = "post";
+  element.setAttribute("data-post-id", postId);
 
-  // Username and timestamp
-  const userDetails = document.createElement("div");
-  userDetails.className = "user-details";
-  userDetails.innerHTML = `
-        <h4>${escapeHtml(post.username || "Unknown User")}</h4>
-        <div class="timestamp" data-timestamp="${post.created_at}">
+  element.innerHTML = `
+    <div class="post-header">
+      <div class="user-info">
+        <div class="user-avatar">${avatar}</div>
+        <div class="user-details">
+          <h4>${escapeHtml(username)}</h4>
+          <div class="timestamp" data-timestamp="${post.created_at}">
             ${formatTimestamp(post.created_at)}
+          </div>
         </div>
-    `;
+      </div>
+      <div class="post-menu">
+        <button class="interaction-btn" onclick="togglePostMenu(${postId})">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+      </div>
+    </div>
 
-  // User info
-  const userInfo = document.createElement("div");
-  userInfo.className = "user-info";
-  userInfo.appendChild(avatar);
-  userInfo.appendChild(userDetails);
+    ${titleHtml}
 
-  // Post header
-  const postHeader = document.createElement("div");
-  postHeader.className = "post-header";
-  postHeader.appendChild(userInfo);
+    <div class="zoom-control" style="margin-bottom:0.5rem;">
+      <label for="asciiZoom-${postId}" class="zoom-label">
+        <i class="fas fa-search-plus"></i> Zoom:
+      </label>
+      <input type="range" id="asciiZoom-${postId}" min="0.5" max="24" value="12" step="0.5">
+      <span id="asciiZoomValue-${postId}">12px</span>
+    </div>
 
-  // Post title
-  let postTitleHtml = "";
-  if (post.title) {
-    postTitleHtml = `<h2 class="post-title">${escapeHtml(post.title)}</h2>`;
+    <pre id="asciiOutput-${postId}" class="ascii-output">${escapeHtml(
+    post.ascii_content || post.content || ""
+  )}</pre>
+
+    <div class="post-interactions">
+      <div class="interaction-buttons">
+        <button class="interaction-btn" onclick="likePost(${postId})">
+          <i class="fas fa-heart"></i>
+          <span id="likes-${postId}">${post.likes_count || 0}</span>
+        </button>
+        <button class="interaction-btn" onclick="sharePost(${postId})">
+          <i class="fas fa-share"></i>
+          Share
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Init zoom
+  if (window.setupAsciiZoomSlider) {
+    window.setupAsciiZoomSlider(
+      `asciiOutput-${postId}`,
+      `asciiZoom-${postId}`,
+      `asciiZoomValue-${postId}`
+    );
   }
 
-  // Zoom control (optional, can be omitted or implemented as needed)
-  let zoomHtml = `
-        <div class="zoom-control" style="margin-bottom:0.5rem;">
-            <label class="zoom-label">
-                <i class="fas fa-search-plus"></i> Zoom:
-            </label>
-            <input type="range" min="0.5" max="24" value="12" step="0.5">
-            <span>12px</span>
-        </div>
-    `;
-
-  // ASCII art or content
-  let asciiHtml = `<pre class="ascii-output">${escapeHtml(
-    post.ascii_content || post.content || ""
-  )}</pre>`;
-
-  // Post interactions (likes)
-  let interactionsHtml = `
-        <div class="post-interactions">
-            <div class="interaction-buttons">
-                <button class="interaction-btn" onclick="likePost(${post.id})">
-                    <i class="fas fa-heart"></i>
-                    <span id="likes-${post.id}">${post.likes_count || 0}</span>
-                </button>
-            </div>
-        </div>
-    `;
-
-  article.innerHTML = `
-        ${postHeader.outerHTML}
-        ${postTitleHtml}
-        ${zoomHtml}
-        ${asciiHtml}
-        ${interactionsHtml}
-    `;
-
-  return article;
+  return element;
 }
 
 // Utility to escape HTML

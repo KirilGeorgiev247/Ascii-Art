@@ -28,7 +28,7 @@ $minimalLayout = $minimalLayout ?? false;
   <?php if (isset($_SESSION['user_id']) && !$hideHeader): ?>
     <header class="header">
       <div class="header-content">
-        <a href="/feed" class="logo"><i class="fas fa-palette"></i> ASCII Art Social - Layout</a>
+        <a href="/feed" class="logo"><i class="fas fa-palette"></i> ASCII Art Social</a>
         <nav class="nav-links">
           <a href="/feed" class="<?= basename($_SERVER['REQUEST_URI']) === 'feed' ? 'active' : '' ?>"><i
               class="fas fa-home"></i> Feed</a>
