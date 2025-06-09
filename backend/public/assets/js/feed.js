@@ -114,6 +114,16 @@ function overwriteFeedWithPosts(posts) {
   if (!container) return;
   container.innerHTML = ""; // Clear current posts
 
+  if (!posts || posts.length === 0) {
+    container.innerHTML = `
+      <div class="loading">
+        <i class="fas fa-palette" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+        <p>No posts yet! Be the first to share some ASCII art.</p>
+      </div>
+    `;
+    return;
+  }
+
   posts.forEach((post) => {
     const postElement = createFeedPostElement(post);
     container.appendChild(postElement);
