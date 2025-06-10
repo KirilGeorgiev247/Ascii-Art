@@ -1,9 +1,19 @@
-# Ascii Art
+# Backend Ascii-Art
 
 ## Setup
 
-To run the UI use:
+To run your app you need to follow these steps:
 
 ```
-npx live-server frontend --port=5500 --open=frontend/index.html
+npm install
 ```
+
+
+```
+composer install & composer run start
+```
+
+## Preresquisites
+
++ installed npmAdd commentMore actions
++ needed extensions enabled php.ini
