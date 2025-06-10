@@ -34,19 +34,6 @@ class UserRepository
         return null;
     }
 
-    public static function findByUsername(string $username): ?User
-    {
-        $db = Database::getInstance();
-        $stmt = $db->getConnection()->prepare('SELECT * FROM users WHERE username = :username');
-        $stmt->execute(['username' => $username]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            return self::rowToUser($row);
-        }
-        return null;
-    }
-
     public static function create(string $username, string $email, string $password): User
     {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -63,7 +50,7 @@ class UserRepository
             'created_at' => $createdAt
         ]);
 
-        $id = (int)$db->getConnection()->lastInsertId();
+        $id = (int) $db->getConnection()->lastInsertId();
         return new User($id, $username, $email, $passwordHash, null, null, $createdAt);
     }
 
@@ -87,49 +74,6 @@ class UserRepository
         ]);
     }
 
-    public static function updatePassword(User $user, string $newPassword): bool
-    {
-        if ($user->getId() === null) {
-            return false;
-        }
-
-        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-
-        $db = Database::getInstance();
-        $stmt = $db->getConnection()->prepare(
-            'UPDATE users SET password_hash = :password_hash WHERE id = :id'
-        );
-
-        $result = $stmt->execute([
-            'password_hash' => $passwordHash,
-            'id' => $user->getId()
-        ]);
-
-        if ($result) {
-            // TODO: check if there is a better way to update the User object without reflection
-            $reflection = new \ReflectionClass($user);
-            $property = $reflection->getProperty('passwordHash');
-            $property->setAccessible(true);
-            $property->setValue($user, $passwordHash);
-        }
-
-        return $result;
-    }
-
-    public static function getAll(int $limit = 50): array
-    {
-        $db = Database::getInstance();
-        $stmt = $db->getConnection()->prepare('SELECT * FROM users ORDER BY created_at DESC LIMIT :limit');
-        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $users = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $users[] = self::rowToUser($row);
-        }
-        return $users;
-    }
-
     public static function searchByUsername(string $query): array
     {
         $db = Database::getInstance();
@@ -148,7 +92,7 @@ class UserRepository
     private static function rowToUser(array $row): User
     {
         return new User(
-            (int)$row['id'],
+            (int) $row['id'],
             $row['username'],
             $row['email'],
             $row['password_hash'],

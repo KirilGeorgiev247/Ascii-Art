@@ -89,6 +89,6 @@ class FriendRepository
             'SELECT * FROM friends WHERE ((user_id = :user_id AND friend_id = :friend_id) OR (user_id = :friend_id AND friend_id = :user_id)) AND status = "accepted"'
         );
         $stmt->execute(['user_id' => $userId, 'friend_id' => $friendId]);
-        return (bool)$stmt->fetch();
+        return (bool) $stmt->fetch();
     }
 }

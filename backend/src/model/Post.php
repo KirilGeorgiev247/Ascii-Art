@@ -104,10 +104,6 @@ class Post
     {
         return $this->updatedAt;
     }
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
 
     public function setTitle(string $title): void
     {
@@ -120,10 +116,6 @@ class Post
     public function setType(string $type): void
     {
         $this->type = $type;
-    }
-    public function setImagePath(?string $imagePath): void
-    {
-        $this->imagePath = $imagePath;
     }
     public function setAsciiContent(?string $asciiContent): void
     {
@@ -141,11 +133,6 @@ class Post
     public static function findById(int $id): ?self
     {
         return PostRepository::findById($id);
-    }
-
-    public static function fetchRecent(int $limit = 20): array
-    {
-        return PostRepository::fetchRecent($limit);
     }
 
     public static function findByUserId(int $userId): array
@@ -178,11 +165,6 @@ class Post
     public function delete(): bool
     {
         return PostRepository::delete($this);
-    }
-
-    public function incrementLikes(): bool
-    {
-        return PostRepository::incrementLikes($this);
     }
 
     public static function searchByQuery(string $query, int $limit = 50): array

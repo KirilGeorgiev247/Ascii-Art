@@ -6,13 +6,15 @@ ob_start();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - ASCII Art Social Network</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="/assets/css/login.css" rel="stylesheet" />
 </head>
+
 <body>
     <main class="auth-container">
         <section class="card">
@@ -32,14 +34,16 @@ ob_start();
                     <label for="email">
                         <i class="fas fa-envelope"></i> Email Address
                     </label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required />
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email"
+                        required />
                 </div>
 
                 <div class="form-group">
                     <label for="password">
                         <i class="fas fa-lock"></i> Password
                     </label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required />
+                    <input type="password" id="password" name="password" class="form-control"
+                        placeholder="Enter your password" required />
                 </div>
 
                 <button type="submit" class="btn btn-primary">
@@ -48,7 +52,7 @@ ob_start();
             </form>
 
             <footer class="auth-links">
-                <p>Don't have an account? 
+                <p>Don't have an account?
                     <a href="/register">Create one here</a>
                 </p>
             </footer>
@@ -66,6 +70,7 @@ ob_start();
 
     <script src="/assets/js/login.js"></script>
 </body>
+
 </html>
 
 <?php

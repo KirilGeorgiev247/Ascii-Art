@@ -57,7 +57,9 @@ ob_start();
                 <div class="algorithm-description" id="algorithmDescription">
                     <h3>Algorithm Description</h3>
                     <p id="algorithmDescriptionText">
-                        Sobel Edge Detection: Applies the Sobel operator to emphasize the edges and outlines in your image, converting the result into high-contrast ASCII art. Great for emphasizing structure and contours.
+                        Sobel Edge Detection: Applies the Sobel operator to emphasize the edges and outlines in your
+                        image, converting the result into high-contrast ASCII art. Great for emphasizing structure and
+                        contours.
                     </p>
                 </div>
             </div>

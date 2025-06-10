@@ -22,7 +22,7 @@ $friendUserIds = [];
 foreach ($friends as $friend) {
     $friendUserIds[] = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
 }
-$friendUserIds[] = $userId; // Exclude yourself as well
+$friendUserIds[] = $userId;
 
 ?>
 <!DOCTYPE html>
@@ -69,7 +69,6 @@ $friendUserIds[] = $userId; // Exclude yourself as well
                 <div class="friends-grid">
                     <?php foreach ($friends as $friend): ?>
                         <?php
-                        // Determine the friend's user ID (the one that isn't the current user)
                         $friendUserId = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
                         $friendUser = User::findById($friendUserId);
                         ?>
@@ -78,7 +77,8 @@ $friendUserIds[] = $userId; // Exclude yourself as well
                                 <?= $friendUser ? strtoupper(substr($friendUser->getUsername(), 0, 1)) : '?' ?>
                             </div>
                             <div class="friend-name">
-                                <?= $friendUser ? htmlspecialchars($friendUser->getUsername()) : 'Unknown' ?></div>
+                                <?= $friendUser ? htmlspecialchars($friendUser->getUsername()) : 'Unknown' ?>
+                            </div>
                             <div class="friend-status">
                                 <i class="fas fa-palette"></i> ASCII Artist
                             </div>
@@ -107,7 +107,6 @@ $friendUserIds[] = $userId; // Exclude yourself as well
                 <div class="friends-grid">
                     <?php foreach ($pendingRequests as $request): ?>
                         <?php
-                        // The user who sent the request is getUserId()
                         $requestUser = User::findById($request->getUserId());
                         ?>
                         <article class="friend-card">
@@ -115,7 +114,8 @@ $friendUserIds[] = $userId; // Exclude yourself as well
                                 <?= $requestUser ? strtoupper(substr($requestUser->getUsername(), 0, 1)) : '?' ?>
                             </div>
                             <div class="friend-name">
-                                <?= $requestUser ? htmlspecialchars($requestUser->getUsername()) : 'Unknown' ?></div>
+                                <?= $requestUser ? htmlspecialchars($requestUser->getUsername()) : 'Unknown' ?>
+                            </div>
                             <div class="friend-status">
                                 <i class="fas fa-clock"></i> Wants to be friends
                             </div>

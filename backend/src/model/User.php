@@ -27,17 +27,39 @@ class User
         $this->createdAt = $createdAt ?: date('Y-m-d H:i:s');
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getUsername(): string { return $this->username; }
-    public function getEmail(): string { return $this->email; }
-    public function getProfilePicture(): ?string { return $this->profilePicture; }
-    public function getBio(): ?string { return $this->bio; }
-    public function getCreatedAt(): string { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
+    }
 
-    public function setUsername(string $username): void { $this->username = $username; }
-    public function setEmail(string $email): void { $this->email = $email; }
-    public function setProfilePicture(?string $profilePicture): void { $this->profilePicture = $profilePicture; }
-    public function setBio(?string $bio): void { $this->bio = $bio; }
+    public function setProfilePicture(?string $profilePicture): void
+    {
+        $this->profilePicture = $profilePicture;
+    }
+    public function setBio(?string $bio): void
+    {
+        $this->bio = $bio;
+    }
 
     public function verifyPassword(string $password): bool
     {
@@ -63,11 +85,6 @@ class User
         return UserRepository::findByEmail($email);
     }
 
-    public static function findByUsername(string $username): ?self
-    {
-        return UserRepository::findByUsername($username);
-    }
-
     public static function create(string $username, string $email, string $password): self
     {
         return UserRepository::create($username, $email, $password);
@@ -78,11 +95,6 @@ class User
         return UserRepository::save($this);
     }
 
-    public function updatePassword(string $newPassword): bool
-    {
-        return UserRepository::updatePassword($this, $newPassword);
-    }
-
     public static function authenticate(string $email, string $password): ?self
     {
         $user = self::findByEmail($email);
@@ -90,11 +102,6 @@ class User
             return $user;
         }
         return null;
-    }
-
-    public static function getAll(int $limit = 50): array
-    {
-        return UserRepository::getAll($limit);
     }
 
     public static function searchByUsername(string $query): array

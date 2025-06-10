@@ -7,7 +7,6 @@ use App\db\Database;
 use App\router\Router;
 use App\service\logger\Logger;
 
-//TODO maybe delete
 require_once __DIR__ . '/../routes/web.php';
 
 $logger = Logger::getInstance();
@@ -22,7 +21,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 date_default_timezone_set('Europe/Sofia');
 
-set_error_handler(function($severity, $message, $file, $line) use ($logger) {
+set_error_handler(function ($severity, $message, $file, $line) use ($logger) {
     $logger->error("PHP Error: $message", [
         'severity' => $severity,
         'file' => $file,
@@ -30,7 +29,7 @@ set_error_handler(function($severity, $message, $file, $line) use ($logger) {
     ]);
 });
 
-set_exception_handler(function($exception) use ($logger) {
+set_exception_handler(function ($exception) use ($logger) {
     $logger->logException($exception, 'Uncaught exception');
     http_response_code(500);
     echo "<h1>Internal Server Error</h1>";
@@ -85,19 +84,3 @@ try {
     echo "<h1>Internal Server Error</h1>";
     echo "<p>An error occurred while processing your request.</p>";
 }
-
-
-// TODO: old logic, delete at some point
-// require_once __DIR__ . '/../vendor/autoload.php';
-
-// use App\db\Database;
-
-// try {
-//     $db = new Database();
-//     echo "<p> Database connection successful.</p>";
-// } catch (Exception $e) {
-//     echo "<p> Database connection failed: " . htmlspecialchars($e->getMessage()) . "</p>";
-//     exit;
-// }
-
-// echo "<p> PHP server is running.</p>";

@@ -46,11 +46,6 @@ class Database
         return $this->connection;
     }
 
-    public function closeConnection(): void
-    {
-        $this->connection = null;
-    }
-
     public function runSqlFile(string $sql_file_path, string $db_host, string $username, string $password): void
     {
         if (!file_exists($sql_file_path)) {
