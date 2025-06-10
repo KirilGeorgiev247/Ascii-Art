@@ -191,7 +191,6 @@ ob_start();
     </div>
 
     <script>
-        // Pass PHP variables to JS
         window.profileUserId = <?= $userId ?>;
         window.profileProfileUserId = <?= $profileUserId ?>;
         window.profileIsOwnProfile = <?= $isOwnProfile ? 'true' : 'false' ?>;

@@ -30,7 +30,6 @@ document.getElementById("convertForm").addEventListener("submit", function (e) {
                 const slider = document.getElementById("asciiZoom");
                 const valueDisplay = document.getElementById("asciiZoomValue");
                 pre.textContent = res.ascii;
-                // Auto-zoom and sync slider/value
                 if (window.autoZoomAscii) {
                     window.autoZoomAscii(pre, slider, valueDisplay);
                 }
@@ -40,7 +39,6 @@ document.getElementById("convertForm").addEventListener("submit", function (e) {
         });
 });
 
-// Setup zoom slider on page load
 document.addEventListener('DOMContentLoaded', function () {
     if (window.setupAsciiZoomSlider) {
         window.setupAsciiZoomSlider();
@@ -89,21 +87,13 @@ function saveAsciiArt() {
     );
 }
 
-// WebSocket connection
 function connectWebSocket() {
     try {
         ws = new WebSocket('ws://localhost:8080');
         
         ws.onopen = function() {
             console.log('Open Websocket from draw');
-            // updateConnectionStatus(true);
-            // reconnectAttempts = 0;
-            
-            // // Send join message
-            // sendMessage('join_feed', {
-            //     userId: userId,
-            //     username: username
-            // });
+
         };
         
         ws.onmessage = function(event) {
@@ -113,7 +103,6 @@ function connectWebSocket() {
         ws.onclose = function(event) {
             console.log('Close Websocket from draw');
             
-            // Attempt to reconnect
             if (reconnectAttempts < maxReconnectAttempts) {
                 setTimeout(() => {
                     reconnectAttempts++;

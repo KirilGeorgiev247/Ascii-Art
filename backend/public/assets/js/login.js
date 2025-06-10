@@ -22,5 +22,5 @@ function validateForm(form) {
 }
 
 function showAlert(message, type) {
-    alert(message); // TODO: nicer message display
+    alert(message); 
 }

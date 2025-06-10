@@ -1,19 +1,15 @@
 <?php
-// Prevent any HTML output by starting output buffering
 ob_start();
 
-// Set these headers at the very top
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-// Disable error displaying - prevents HTML errors from appearing in JSON responses
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
@@ -24,7 +20,6 @@ use App\model\Post;
 use App\model\User;
 use App\service\logger\Logger;
 
-// Set error handler to prevent HTML error output
 set_error_handler(function($severity, $message, $file, $line) {
     $logger = Logger::getInstance();
     $logger->error("PHP Error in posts API: $message", [
@@ -32,10 +27,9 @@ set_error_handler(function($severity, $message, $file, $line) {
         'file' => $file,
         'line' => $line
     ]);
-    return true; // Don't execute PHP's internal error handler
+    return true;
 });
 
-// Initialize logger and start API request logging
 $logger = Logger::getInstance();
 $requestStart = microtime(true);
 
@@ -60,7 +54,6 @@ try {
     switch ($method) {
         case 'GET':
             if (isset($_GET['user_id'])) {
-                // Get posts for specific user
                 $userId = (int)$_GET['user_id'];
                 $logger->info("Fetching posts for specific user", ['target_user_id' => $userId]);
                 
@@ -73,7 +66,6 @@ try {
                     'post_count' => count($posts)
                 ]);
                 
-                //TODO check all fields
                 $result = array_map(function($post) {
                     return [
                         'id' => $post->getId(),
@@ -91,7 +83,6 @@ try {
                 apiSendResponse($result);
                 
             } elseif (isset($_GET['feed'])) {
-                // Get feed for authenticated user
                 $userId = apiRequireAuth();
                 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
                 
@@ -110,7 +101,6 @@ try {
                     'limit' => $limit
                 ]);
                 
-                //TODO check fields
                 $result = array_map(function($post) {
                     return [
                         'id' => $post->getId(),
@@ -129,7 +119,6 @@ try {
                 apiSendResponse($result);
                 
             } else {
-                // Get recent posts
                 $logger->info("vliza li tuka");
                 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
                 $logger->info("Fetching recent posts", ['limit' => $limit]);
@@ -148,7 +137,6 @@ try {
                     'limit' => $limit
                 ]);
                 
-                //TODO check fields
                 $result = array_map(function($post) {
                     return [
                         'id' => $post->getId(),
@@ -163,14 +151,6 @@ try {
                         'created_at' => $post->getCreatedAt()
                     ];
                 }, $posts);
-
-                // for every post call the logger info method
-
-                // $logger->info("Recent posts fetched successfully", [
-                //     'posts' => $result,
-                //     'limit' => $limit
-                // ]);
-                
                 apiSendResponse($result);
             }
             break;

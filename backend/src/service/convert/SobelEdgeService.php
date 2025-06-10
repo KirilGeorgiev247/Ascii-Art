@@ -37,7 +37,7 @@ class SobelEdgeService
                 $magnitude = min(255, $magnitude);
 
                 $index = (int)(($magnitude / 255) * (count($chars) - 1));
-                $index = max(0, min($index, count($chars) - 1)); // protect against out-of-bounds
+                $index = max(0, min($index, count($chars) - 1)); 
 
                 $ascii .= $chars[$index];
             }

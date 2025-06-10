@@ -19,7 +19,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    // Accept base64 or file upload
     if (isset($_FILES['image'])) {
         $imgPath = $_FILES['image']['tmp_name'];
         $img = imagecreatefromstring(file_get_contents($imgPath));

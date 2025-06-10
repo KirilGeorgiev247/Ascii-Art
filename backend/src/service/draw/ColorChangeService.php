@@ -5,7 +5,6 @@ namespace App\service\draw;
 class ColorChangeService
 {
 
-    // Change all pixels of one color to another
     public static function changeColor(&$canvas, $fromColor, $toColor)
     {
         foreach ($canvas as $y => $row) {

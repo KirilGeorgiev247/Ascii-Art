@@ -200,7 +200,6 @@ class PostRepository
             ]);
 
             if ($result) {
-                // Update the object's updatedAt property
                 $post->setUpdatedAt($updatedAt);
             }
 
@@ -230,11 +229,9 @@ class PostRepository
         try {
             $db = Database::getInstance();
 
-            // Delete related likes first
             $stmt = $db->getConnection()->prepare('DELETE FROM likes WHERE post_id = :id');
             $stmt->execute(['id' => $post->getId()]);
 
-            // Delete the post
             $stmt = $db->getConnection()->prepare('DELETE FROM posts WHERE id = :id');
             $result = $stmt->execute(['id' => $post->getId()]);
 
@@ -265,7 +262,6 @@ class PostRepository
             $success = $stmt->execute(['id' => $post->getId()]);
 
             if ($success) {
-                // Update the object's likesCount property
                 $reflection = new \ReflectionClass($post);
                 $property = $reflection->getProperty('likesCount');
                 $property->setAccessible(true);

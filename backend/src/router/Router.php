@@ -113,7 +113,6 @@ class Router {
             }
         }
 
-        // TODO: make not found page
         $duration = (microtime(true) - $startTime) * 1000;
         $this->logger->warning("No route found - 404", [
             'method' => $method,

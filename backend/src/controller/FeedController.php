@@ -42,14 +42,12 @@ class FeedController
                 'username' => $user->getUsername()
             ]);
 
-            // Get posts for the user's feed (own posts + friends' posts + public posts)
             $posts = Post::getFeedForUser($userId, 20);
             $logger->info("Feed posts loaded", [
                 'user_id' => $userId,
                 'post_count' => count($posts)
             ]);
 
-            // Get friend requests
             $pendingRequests = Friend::getPendingRequests($userId);
             $logger->debug("Friend requests loaded", [
                 'user_id' => $userId,
@@ -195,20 +193,16 @@ class FeedController
         }
 
         try {
-            // Use static methods from Like model
             $isLiked = Like::isPostLikedByUser($userId, $postId);
 
             if ($isLiked) {
-                // Unlike
                 Like::unlikePost($userId, $postId);
                 $action = 'unliked';
             } else {
-                // Like
                 Like::likePost($userId, $postId);
                 $action = 'liked';
             }
 
-            // Get updated like count
             $post = Post::findById($postId);
             $likesCount = $post ? $post->getLikesCount() : 0;
 
@@ -273,7 +267,6 @@ class FeedController
                 exit;
             }
 
-            // Check if user owns the post
             if ($post->getUserId() !== $userId) {
                 $logger->warning("Post deletion failed - unauthorized", [
                     'user_id' => $userId,
@@ -343,7 +336,6 @@ class FeedController
         ]);
 
         if (!empty($query)) {
-            // Use Post model instead of direct database access
             $posts = Post::searchByQuery($query);
 
             $logger->info("Search results", [

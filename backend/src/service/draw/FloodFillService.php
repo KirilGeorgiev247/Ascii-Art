@@ -4,7 +4,6 @@ namespace App\service\draw;
 
 class FloodFillService
 {
-    // Flood fill for 2D array
     public static function floodFill(&$canvas, $x, $y, $targetColor, $replacementColor)
     {
         $height = count($canvas);

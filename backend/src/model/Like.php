@@ -26,17 +26,14 @@ class Like
         $this->username = $username;
     }
     
-    // Getters
     public function getId(): ?int { return $this->id; }
     public function getUserId(): int { return $this->userId; }
     public function getPostId(): int { return $this->postId; }
     public function getCreatedAt(): string { return $this->createdAt; }
     public function getUsername(): ?string { return $this->username; }
     
-    // Setters
     public function setUsername(?string $username): void { $this->username = $username; }
     
-    // Static methods
     public static function isPostLikedByUser(int $userId, int $postId): bool
     {
         $repository = new LikeRepository();

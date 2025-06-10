@@ -35,7 +35,6 @@ class AuthController
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/login');
-        // TODO: check if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -90,7 +89,6 @@ class AuthController
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/register');
-        // TODO: check if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -161,7 +159,6 @@ class AuthController
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/logout');
-        // TODO: check if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

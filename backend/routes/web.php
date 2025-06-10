@@ -64,7 +64,6 @@ function adminOnly() {
     ]);
 }
 
-// API Helpers - moved from individual API files to centralize code
 function apiRequireAuth() {
     global $logger;
     
@@ -86,7 +85,6 @@ function apiRequireAuth() {
 function apiSendResponse($data, $status = 200) {
     global $logger, $requestStart;
     
-    // Clean any previous output
     if (ob_get_length()) {
         ob_clean();
     }
@@ -95,7 +93,6 @@ function apiSendResponse($data, $status = 200) {
     
     $responseData = json_encode($data);
     if ($responseData === false) {
-        // Handle JSON encode errors
         $logger->error("JSON encode error", [
             'error' => json_last_error_msg(),
             'data_preview' => substr(print_r($data, true), 0, 200)

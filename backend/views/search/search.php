@@ -1,5 +1,4 @@
 <?php
-// Search results view
 $query = $_GET['q'] ?? '';
 $posts = $posts ?? [];
 ?>

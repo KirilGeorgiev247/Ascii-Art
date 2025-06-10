@@ -69,7 +69,6 @@ $friendUserIds[] = $userId; // Exclude yourself as well
                 <div class="friends-grid">
                     <?php foreach ($friends as $friend): ?>
                         <?php
-                        // Determine the friend's user ID (the one that isn't the current user)
                         $friendUserId = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
                         $friendUser = User::findById($friendUserId);
                         ?>
@@ -107,7 +106,6 @@ $friendUserIds[] = $userId; // Exclude yourself as well
                 <div class="friends-grid">
                     <?php foreach ($pendingRequests as $request): ?>
                         <?php
-                        // The user who sent the request is getUserId()
                         $requestUser = User::findById($request->getUserId());
                         ?>
                         <article class="friend-card">

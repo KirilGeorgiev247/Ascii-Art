@@ -1,7 +1,6 @@
 let searchTimeout;
 let currentFilter = 'all';
 
-// Initialize filter buttons
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -179,7 +178,6 @@ function sendFriendRequest(userId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update the button state
             event.target.outerHTML = `
                 <button class="btn btn-secondary" disabled>
                     <i class="fas fa-clock"></i> Pending
@@ -197,7 +195,6 @@ function sendFriendRequest(userId) {
 }
 
 function removeFriend(userId) {
-    // TODO: Show confirmation dialog
     if (confirm('Are you sure you want to remove this friend?')) {
         fetch('/api/friends/remove', {
             method: 'POST',
@@ -209,7 +206,6 @@ function removeFriend(userId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update the button state
                 event.target.outerHTML = `
                     <button class="btn btn-success" onclick="sendFriendRequest(${userId})">
                         <i class="fas fa-user-plus"></i> Add Friend
@@ -228,7 +224,6 @@ function removeFriend(userId) {
 }
 
 function showNotification(message, type) {
-    // Create notification element
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed;
@@ -246,7 +241,6 @@ function showNotification(message, type) {
 
     document.body.appendChild(notification);
 
-    // Remove after 3 seconds
     setTimeout(() => {
         notification.remove();
     }, 3000);

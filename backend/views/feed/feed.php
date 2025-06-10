@@ -107,7 +107,6 @@ ob_start();
     </div>
 
     <script>
-        // Pass PHP variables to JavaScript
         const userId = <?= $userId ?>;
         const username = '<?= htmlspecialchars($currentUser->getUsername()) ?>';
     </script>

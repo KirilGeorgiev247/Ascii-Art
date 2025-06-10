@@ -7,15 +7,12 @@ use App\controller\FeedController;
 use App\controller\DrawController;
 use App\controller\ConvertController;
 
-// TODO see if we should remove requireAuth and guestOnly from here
-
 $logger = Logger::getInstance();
 $logger->debug("Loading routes", [
     'routes_file' => 'routes/routes.php',
     'timestamp' => date('Y-m-d H:i:s')
 ]);
 
-// Basic routes
 $router->get('/', function() use ($logger) {
     $logger->info("Home page accessed", [
         'user_id' => $_SESSION['user_id'] ?? null,
@@ -44,7 +41,6 @@ $router->get('/admin', function() use ($logger) {
     require_once __DIR__ . '/../views/admin/admin.php';
 });
 
-// Auth routes
 $router->get('/login', function() use ($logger) {
     guestOnly();
     $logger->info("Login page route accessed", [
@@ -94,7 +90,6 @@ $router->get('/logout', function() use ($logger) {
     (new AuthController())->logout();
 });
 
-// Feed routes
 $router->get('/feed', function() use ($logger) {
     requireAuth();
     $logger->info("Feed page route accessed", [
@@ -145,7 +140,6 @@ $router->get('/feed/search', function() use ($logger) {
     (new FeedController())->search();
 });
 
-// Profile routes
 $router->get('/profile', function() use ($logger) {
     requireAuth();
     $logger->info("Profile page accessed (own)", [
@@ -208,7 +202,6 @@ $router->get('/search/users', function() use ($logger) {
     (new ProfileController())->searchUsers();
 });
 
-// API routes for AJAX requests
 $router->get('/api/posts', function() use ($logger) {
     $logger->debug("API: Getting posts");
     header('Content-Type: application/json');
@@ -242,8 +235,6 @@ $router->get('/api/users/search', function() use ($logger) {
     require_once __DIR__ . '/../src/api/users.php';
 });
 
-// random
-
 $router->get('/api/users', function() {
     require_once __DIR__ . '/../src/api/users.php';
 });
@@ -264,7 +255,6 @@ $router->post('/api/friends/remove', function() {
     require_once __DIR__ . '/../src/api/friends.php';
 });
 
-// Static file serving for uploads
 $router->get('/uploads/{filename}', function($filename) use ($logger) {
     $logger->debug("Serving file", ['filename' => $filename]);
     $filePath = __DIR__ . '/../uploads/' . $filename;
@@ -283,7 +273,6 @@ $router->get('/uploads/{filename}', function($filename) use ($logger) {
     }
 });
 
-// draw routes
 $router->get('/draw', function() {
     requireAuth();
     (new DrawController())->index();
@@ -303,10 +292,8 @@ $router->get('/add_posts', function() {
     $logger = Logger::getInstance();
     $logger->debug("Testing posts for user", ['user_id' => $userId]);
     require_once __DIR__ . '/../src/api/posts.php';
-    // apiSendResponse((new FeedController())->testPosts($userId));
 });
 
-// convert routes
 $router->get('/image', function() {
     requireAuth();
     (new ConvertController())->index();

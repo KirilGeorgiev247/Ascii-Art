@@ -34,7 +34,7 @@ class DrawController
             $userId,
             $title,
             $asciiContent,
-            'drawing', // type
+            'drawing',
             $imagePath,
             $asciiContent,
             'public'

@@ -44,7 +44,6 @@ $pathParts = explode('/', trim($path, '/'));
 try {
     switch ($method) {
         case 'POST':
-            // /api/likes/{post_id}
             if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
                 $postId = (int)$pathParts[2];
                 $userId = apiRequireAuth();
@@ -79,7 +78,6 @@ try {
             break;
 
         case 'GET':
-            // /api/likes/{post_id}
             if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
                 $postId = (int)$pathParts[2];
                 $likes = Like::getLikesForPost($postId);

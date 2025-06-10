@@ -50,7 +50,6 @@ function searchUsers() {
 }
 
 function displaySearchResults(users) {
-  // Filter out users who are already friends or yourself
   const filteredUsers = users.filter(user => !window.friendUserIds.includes(user.id));
   const resultsContainer = document.getElementById("searchResults");
 
@@ -112,7 +111,7 @@ function sendFriendRequest(userId) {
     .then((data) => {
       if (data.success) {
         showDialog("Friend request sent!", "success");
-        searchUsers(); // Refresh to update button state
+        searchUsers(); 
       } else {
         showDialog(data.error, "error");
       }
@@ -178,7 +177,6 @@ function removeFriend(userId) {
           });
       },
       onCancel: function () {
-        // Optionally do something if user clicks No
       }
     }
   );

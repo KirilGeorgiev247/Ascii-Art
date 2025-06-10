@@ -15,13 +15,11 @@ function showDialog(message, type = "info", options = {}) {
 
   dialogTitle.innerHTML = icon;
 
-  // Remove previous input/button if any
   let dialogNoBtn = document.getElementById("dialogNoBtn");
   if (dialogNoBtn) dialogNoBtn.remove();
   let dialogInput = document.getElementById("dialogInput");
   if (dialogInput) dialogInput.remove();
 
-  // Add input if requested
   if (options.input) {
     dialogMessage.innerHTML = `<div>${message}</div>`;
     dialogInput = document.createElement("input");
@@ -36,7 +34,6 @@ function showDialog(message, type = "info", options = {}) {
     dialogMessage.textContent = message;
   }
 
-  // Add No/Cancel button for questions
   if (type === "question" || options.showCancel) {
     dialogOkBtn.textContent = options.okText || "Yes";
     dialogOkBtn.classList.add("custom-dialog-yes");

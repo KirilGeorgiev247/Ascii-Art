@@ -44,10 +44,8 @@ class LikeRepository
             $db = Database::getInstance();
             $conn = $db->getConnection();
 
-            // Begin transaction
             $conn->beginTransaction();
 
-            // Insert like record
             $stmt = $conn->prepare(
                 'INSERT INTO likes (user_id, post_id, created_at) VALUES (:user_id, :post_id, :created_at)'
             );
@@ -57,13 +55,11 @@ class LikeRepository
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
-            // Update post likes count
             $stmt = $conn->prepare(
                 'UPDATE posts SET likes_count = likes_count + 1 WHERE id = :post_id'
             );
             $stmt->execute(['post_id' => $postId]);
 
-            // Commit transaction
             $conn->commit();
 
             $logger->info("Post liked successfully", [
@@ -73,7 +69,6 @@ class LikeRepository
 
             return true;
         } catch (Exception $e) {
-            // Rollback transaction on error
             if (isset($conn) && $conn->inTransaction()) {
                 $conn->rollBack();
             }
@@ -95,22 +90,18 @@ class LikeRepository
             $db = Database::getInstance();
             $conn = $db->getConnection();
 
-            // Begin transaction
             $conn->beginTransaction();
 
-            // Delete like record
             $stmt = $conn->prepare(
                 'DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id'
             );
             $stmt->execute(['user_id' => $userId, 'post_id' => $postId]);
 
-            // Update post likes count
             $stmt = $conn->prepare(
                 'UPDATE posts SET likes_count = GREATEST(likes_count - 1, 0) WHERE id = :post_id'
             );
             $stmt->execute(['post_id' => $postId]);
 
-            // Commit transaction
             $conn->commit();
 
             $logger->info("Post unliked successfully", [
@@ -120,7 +111,6 @@ class LikeRepository
 
             return true;
         } catch (Exception $e) {
-            // Rollback transaction on error
             if (isset($conn) && $conn->inTransaction()) {
                 $conn->rollBack();
             }

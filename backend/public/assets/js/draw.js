@@ -97,7 +97,6 @@ function handleFloodFill(e) {
     const targetColor = getColorAt(data, x, y);
     const replacementColor = hexToRgb(color);
     if (colorsEqual(targetColor, replacementColor)) return;
-    // Use API for flood fill
     fetch('/api/draw', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -187,7 +186,6 @@ function setCanvasFromArray(arr) {
     ctx.putImageData(imageData, 0, 0);
 }
 
-// Import/Export
 function importImage() {
     document.getElementById('importInput').click();
 }
@@ -209,7 +207,6 @@ function exportAscii() {
 
 function imageToAscii(imageData) {
     const chars = "@%#*+=-:. ";
-    // Target ASCII output size
     const asciiWidth = 80;
     const asciiHeight = 40;
     const cellWidth = Math.floor(imageData.width / asciiWidth);
@@ -217,7 +214,6 @@ function imageToAscii(imageData) {
     let ascii = "";
     for (let y = 0; y < asciiHeight; y++) {
         for (let x = 0; x < asciiWidth; x++) {
-            // Average color in the cell
             let r = 0, g = 0, b = 0, count = 0;
             for (let dy = 0; dy < cellHeight; dy++) {
                 for (let dx = 0; dx < cellWidth; dx++) {
@@ -275,7 +271,6 @@ function saveDrawing() {
                 });
             },
             onCancel: function () {
-                // Do nothing, user cancelled
             }
         }
     );
@@ -285,7 +280,6 @@ function clearCanvas() {
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
-    // If you have an ASCII output textarea, clear it too:
     const asciiOutput = document.getElementById('asciiOutput');
     if (asciiOutput) asciiOutput.value = '';
 }
@@ -325,21 +319,12 @@ function downloadAscii() {
     );
 }
 
-// WebSocket connection
 function connectWebSocket() {
     try {
         ws = new WebSocket('ws://localhost:8080');
         
         ws.onopen = function() {
             console.log('Open Websocket from draw');
-            // updateConnectionStatus(true);
-            // reconnectAttempts = 0;
-            
-            // // Send join message
-            // sendMessage('join_feed', {
-            //     userId: userId,
-            //     username: username
-            // });
         };
         
         ws.onmessage = function(event) {
@@ -349,7 +334,6 @@ function connectWebSocket() {
         ws.onclose = function(event) {
             console.log('Close Websocket from draw');
             
-            // Attempt to reconnect
             if (reconnectAttempts < maxReconnectAttempts) {
                 setTimeout(() => {
                     reconnectAttempts++;
@@ -378,8 +362,6 @@ function sendMessage(type, payload) {
     }
 }
 
-// TODO: check if should delete
-// Optional: Load ASCII art from localStorage (for editing)
 window.addEventListener('DOMContentLoaded', () => {
     connectWebSocket();
 

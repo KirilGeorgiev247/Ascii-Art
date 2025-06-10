@@ -106,7 +106,6 @@ class UserRepository
         ]);
 
         if ($result) {
-            // TODO: check if there is a better way to update the User object without reflection
             $reflection = new \ReflectionClass($user);
             $property = $reflection->getProperty('passwordHash');
             $property->setAccessible(true);

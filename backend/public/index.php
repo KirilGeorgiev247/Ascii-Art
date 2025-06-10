@@ -7,7 +7,6 @@ use App\db\Database;
 use App\router\Router;
 use App\service\logger\Logger;
 
-//TODO maybe delete
 require_once __DIR__ . '/../routes/web.php';
 
 $logger = Logger::getInstance();
@@ -85,19 +84,3 @@ try {
     echo "<h1>Internal Server Error</h1>";
     echo "<p>An error occurred while processing your request.</p>";
 }
-
-
-// TODO: old logic, delete at some point
-// require_once __DIR__ . '/../vendor/autoload.php';
-
-// use App\db\Database;
-
-// try {
-//     $db = new Database();
-//     echo "<p> Database connection successful.</p>";
-// } catch (Exception $e) {
-//     echo "<p> Database connection failed: " . htmlspecialchars($e->getMessage()) . "</p>";
-//     exit;
-// }
-
-// echo "<p> PHP server is running.</p>";

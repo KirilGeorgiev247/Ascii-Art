@@ -47,9 +47,7 @@ try {
                     'count' => count($pendingRequests)
                 ]);
 
-                // Process Friend objects returned from getPendingRequests
                 $result = array_map(function ($request) {
-                    // Get the user who sent the request
                     $sender = User::findById($request->getUserId());
                     return [
                         'id' => $request->getId(),
@@ -98,12 +96,9 @@ try {
                     'count' => count($friends)
                 ]);
 
-                // Process Friend objects returned from getFriends
                 $result = array_map(function ($friend) use ($userId) {
-                    // Determine the friend's user ID (the one that isn't the current user)
                     $friendUserId = $friend->getUserId() == $userId ? $friend->getFriendId() : $friend->getUserId();
 
-                    // Get the friend's user details
                     $friendUser = User::findById($friendUserId);
 
                     return [
@@ -120,7 +115,6 @@ try {
             break;
 
         case 'POST':
-            // /api/friends/reject
             if (isset($pathParts[2]) && $pathParts[2] === 'reject') {
                 $userId = apiRequireAuth();
                 $input = json_decode(file_get_contents('php://input'), true);
@@ -137,7 +131,6 @@ try {
                     'friend_id' => $friendId
                 ]);
 
-                // Remove the pending request (direction: friend sent to user)
                 $success = Friend::removeFriendship($friendId, $userId);
                 if ($success) {
                     apiSendResponse(['success' => true, 'message' => 'Friend request rejected']);
@@ -147,7 +140,6 @@ try {
                 break;
             }
 
-            // /api/friends/accept
             if (isset($pathParts[2]) && $pathParts[2] === 'accept') {
                 $userId = apiRequireAuth();
                 $input = json_decode(file_get_contents('php://input'), true);
@@ -164,7 +156,6 @@ try {
                     'friend_id' => $friendId
                 ]);
 
-                // Accept the pending request (direction: friend sent to user)
                 $accepted = Friend::acceptFriendship($userId, $friendId);
                 if ($accepted) {
                     apiSendResponse(['success' => true, 'message' => 'Friend request accepted']);
@@ -174,7 +165,6 @@ try {
                 break;
             }
 
-            // /api/friends/remove
             if (isset($pathParts[2]) && $pathParts[2] === 'remove') {
                 $userId = apiRequireAuth();
                 $input = json_decode(file_get_contents('php://input'), true);
@@ -200,7 +190,6 @@ try {
                 break;
             }
 
-            // /api/friends/add
             if (isset($pathParts[2]) && $pathParts[2] === 'add') {
                 $userId = apiRequireAuth();
                 $input = json_decode(file_get_contents('php://input'), true);
@@ -222,7 +211,6 @@ try {
                     'friend_id' => $friendId
                 ]);
 
-                // Check if already friends or request pending
                 $status = Friend::getFriendshipStatus($userId, $friendId);
                 if ($status === 'accepted') {
                     apiSendResponse(['error' => 'Already friends', 'status' => 'accepted'], 400);
@@ -239,7 +227,6 @@ try {
                 break;
             }
 
-            // fallback
             apiSendResponse(['error' => 'Invalid endpoint'], 404);
             break;
 
@@ -261,7 +248,6 @@ try {
 
             $startTime = microtime(true);
 
-            // Check if request exists
             $status = Friend::getFriendshipStatus($friendId, $userId);
             if ($status !== 'pending') {
                 $logger->warning("No pending friend request to accept", [
@@ -272,7 +258,6 @@ try {
                 apiSendResponse(['error' => 'No pending friend request found'], 400);
             }
 
-            // Use acceptFriendship instead of acceptRequest
             $success = Friend::acceptFriendship($userId, $friendId);
             $duration = (microtime(true) - $startTime) * 1000;
 
@@ -312,7 +297,6 @@ try {
             ]);
 
             $startTime = microtime(true);
-            // Use removeFriendship instead of removeConnection
             $success = Friend::removeFriendship($userId, $friendId);
             $duration = (microtime(true) - $startTime) * 1000;
 
