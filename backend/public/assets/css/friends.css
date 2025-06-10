@@ -9,7 +9,8 @@ body {
     background: linear-gradient(135deg, #66eae3 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
-    color: #111; /* black base text color */
+    color: #111;
+    /* black base text color */
 }
 
 .container {
@@ -27,7 +28,8 @@ body {
 }
 
 .page-header h1 {
-    color: #111; /* black heading */
+    color: #111;
+    /* black heading */
     font-size: 2.5rem;
     margin-bottom: 10px;
 }
@@ -68,7 +70,7 @@ body {
     gap: 20px;
 }
 
-.friends-grid > .empty-state {
+.friends-grid>.empty-state {
     grid-column: 1 / -1;
     justify-self: center;
     align-self: center;
@@ -236,6 +238,7 @@ body {
     margin-left: 0.5rem;
     transition: background 0.2s, color 0.2s;
 }
+
 .action-btn.secondary#viewFriendsBtn:hover {
     background: #e1e5e9;
     color: #111;
@@ -246,7 +249,8 @@ body {
     pointer-events: none;
 }
 
-.btn[disabled], .btn:disabled {
+.btn[disabled],
+.btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
@@ -256,17 +260,17 @@ body {
     padding: 0.6em 2em;
     display: inline-flex;
     align-items: center;
-    justify-content: center;     
+    justify-content: center;
     font-size: 1rem;
     font-weight: 600;
     gap: 0.5em;
 }
 
 #findFriendsBtn i {
-    font-size: 1.2em;             
+    font-size: 1.2em;
     margin-right: 0.5em;
-    line-height: 1;                
-    display: flex;                 
-    align-items: center;           
-    height: 1em;                   
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    height: 1em;
 }

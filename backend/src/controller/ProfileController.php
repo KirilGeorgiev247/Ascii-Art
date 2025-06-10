@@ -30,7 +30,7 @@ class ProfileController
         }
 
         $currentUserId = $_SESSION['user_id'];
-        $profileUserId = $userId ?? $currentUserId; 
+        $profileUserId = $userId ?? $currentUserId;
         $isOwnProfile = ($currentUserId === $profileUserId);
 
         $logger->info("Loading profile", [

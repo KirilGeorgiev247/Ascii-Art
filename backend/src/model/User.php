@@ -27,17 +27,47 @@ class User
         $this->createdAt = $createdAt ?: date('Y-m-d H:i:s');
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getUsername(): string { return $this->username; }
-    public function getEmail(): string { return $this->email; }
-    public function getProfilePicture(): ?string { return $this->profilePicture; }
-    public function getBio(): ?string { return $this->bio; }
-    public function getCreatedAt(): string { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
+    }
 
-    public function setUsername(string $username): void { $this->username = $username; }
-    public function setEmail(string $email): void { $this->email = $email; }
-    public function setProfilePicture(?string $profilePicture): void { $this->profilePicture = $profilePicture; }
-    public function setBio(?string $bio): void { $this->bio = $bio; }
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+    public function setProfilePicture(?string $profilePicture): void
+    {
+        $this->profilePicture = $profilePicture;
+    }
+    public function setBio(?string $bio): void
+    {
+        $this->bio = $bio;
+    }
 
     public function verifyPassword(string $password): bool
     {

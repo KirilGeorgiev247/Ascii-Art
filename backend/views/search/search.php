@@ -4,6 +4,7 @@ $posts = $posts ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,22 +23,27 @@ $posts = $posts ?? [];
             max-height: 200px;
             overflow: hidden;
         }
+
         .post-meta {
             color: #6c757d;
             font-size: 0.9rem;
         }
+
         .navbar-brand {
             font-weight: bold;
             color: #495057 !important;
         }
+
         .search-result {
             transition: transform 0.2s;
         }
+
         .search-result:hover {
             transform: translateY(-2px);
         }
     </style>
 </head>
+
 <body class="bg-light">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
@@ -90,9 +96,9 @@ $posts = $posts ?? [];
                     <div class="card-body">
                         <form method="GET" action="/search">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="q" 
-                                       placeholder="Search for ASCII art, titles, or content..." 
-                                       value="<?= htmlspecialchars($query) ?>">
+                                <input type="text" class="form-control" name="q"
+                                    placeholder="Search for ASCII art, titles, or content..."
+                                    value="<?= htmlspecialchars($query) ?>">
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-search"></i>
                                 </button>
@@ -129,10 +135,11 @@ $posts = $posts ?? [];
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="me-3">
                                         <?php if (isset($post->profile_picture) && $post->profile_picture): ?>
-                                            <img src="<?= htmlspecialchars($post->profile_picture) ?>" 
-                                                 alt="Profile" class="rounded-circle" width="40" height="40">
-                                        <?php else: ?>                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" 
-                                                 style="width: 40px; height: 40px;">
+                                            <img src="<?= htmlspecialchars($post->profile_picture) ?>" alt="Profile"
+                                                class="rounded-circle" width="40" height="40">
+                                        <?php else: ?>
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px;">
                                                 <?= strtoupper(substr($post->getUsername() ?? 'U', 0, 1)) ?>
                                             </div>
                                         <?php endif; ?>
@@ -144,7 +151,7 @@ $posts = $posts ?? [];
                                             </a>
                                         </h6>
                                         <div class="post-meta">
-                                            By <?= htmlspecialchars($post->getUsername() ?? 'Unknown') ?> • 
+                                            By <?= htmlspecialchars($post->getUsername() ?? 'Unknown') ?> •
                                             <?= date('M j, Y', strtotime($post->getCreatedAt())) ?>
                                         </div>
                                     </div>
@@ -159,10 +166,10 @@ $posts = $posts ?? [];
 
                                 <?php if ($post->getAsciiContent()): ?>
                                     <div class="ascii-art mb-3">
-<?= htmlspecialchars(substr($post->getAsciiContent(), 0, 500)) ?>
-<?php if (strlen($post->getAsciiContent()) > 500): ?>
-...
-<?php endif; ?>
+                                        <?= htmlspecialchars(substr($post->getAsciiContent(), 0, 500)) ?>
+                                        <?php if (strlen($post->getAsciiContent()) > 500): ?>
+                                            ...
+                                        <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
 
@@ -189,4 +196,5 @@ $posts = $posts ?? [];
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

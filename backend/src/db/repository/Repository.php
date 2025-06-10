@@ -4,7 +4,8 @@ namespace App\db\repository;
 
 use App\db\Database;
 
-class Repository {
+class Repository
+{
 
     protected $database;
     protected $className;
@@ -22,6 +23,6 @@ class Repository {
     {
         $this->database->closeConnection();
     }
-    
+
 }
 

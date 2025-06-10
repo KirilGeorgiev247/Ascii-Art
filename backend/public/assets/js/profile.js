@@ -132,7 +132,7 @@ function deletePost(postId) {
               `[data-post-id="${postId}"]`
             );
             if (postElem) postElem.remove();
-            sendMessage('add_post');
+            sendMessage("add_post");
             showDialog("Post deleted successfully.", "success", {
               onOk: function () {
                 location.reload();

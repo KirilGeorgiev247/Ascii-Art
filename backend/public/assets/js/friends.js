@@ -50,7 +50,9 @@ function searchUsers() {
 }
 
 function displaySearchResults(users) {
-  const filteredUsers = users.filter(user => !window.friendUserIds.includes(user.id));
+  const filteredUsers = users.filter(
+    (user) => !window.friendUserIds.includes(user.id)
+  );
   const resultsContainer = document.getElementById("searchResults");
 
   if (!filteredUsers || filteredUsers.length === 0) {
@@ -65,19 +67,18 @@ function displaySearchResults(users) {
   }
 
   resultsContainer.innerHTML = filteredUsers
-    .map(
-      (user) => {
-        let actionButton = '';
-        if (user.friendship_status === 'pending') {
-          actionButton = `<button class="btn btn-secondary" disabled>
+    .map((user) => {
+      let actionButton = "";
+      if (user.friendship_status === "pending") {
+        actionButton = `<button class="btn btn-secondary" disabled>
             <i class="fas fa-clock"></i> Sent
           </button>`;
-        } else {
-          actionButton = `<button class="btn btn-success" onclick="sendFriendRequest(${user.id})">
+      } else {
+        actionButton = `<button class="btn btn-success" onclick="sendFriendRequest(${user.id})">
             <i class="fas fa-user-plus"></i> Add Friend
           </button>`;
-        }
-        return `
+      }
+      return `
         <div class="friend-card">
           <div class="friend-avatar">
             ${user.username.charAt(0).toUpperCase()}
@@ -94,8 +95,7 @@ function displaySearchResults(users) {
           </div>
         </div>
       `;
-      }
-    )
+    })
     .join("");
 }
 
@@ -111,7 +111,7 @@ function sendFriendRequest(userId) {
     .then((data) => {
       if (data.success) {
         showDialog("Friend request sent!", "success");
-        searchUsers(); 
+        searchUsers();
       } else {
         showDialog(data.error, "error");
       }
@@ -155,31 +155,26 @@ function rejectFriend(userId) {
 }
 
 function removeFriend(userId) {
-  showDialog(
-    "Are you sure you want to remove this friend?",
-    "question",
-    {
-      onOk: function () {
-        fetch("/api/friends/remove", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ friend_id: userId }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              location.reload();
-            } else {
-              showDialog(data.error, "error");
-            }
-          });
-      },
-      onCancel: function () {
-      }
-    }
-  );
+  showDialog("Are you sure you want to remove this friend?", "question", {
+    onOk: function () {
+      fetch("/api/friends/remove", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ friend_id: userId }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            location.reload();
+          } else {
+            showDialog(data.error, "error");
+          }
+        });
+    },
+    onCancel: function () {},
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function () {

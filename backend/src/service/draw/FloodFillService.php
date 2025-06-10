@@ -8,13 +8,16 @@ class FloodFillService
     {
         $height = count($canvas);
         $width = count($canvas[0]);
-        if ($targetColor === $replacementColor) return;
+        if ($targetColor === $replacementColor)
+            return;
 
         $queue = [[$x, $y]];
         while ($queue) {
             [$cx, $cy] = array_pop($queue);
-            if ($cx < 0 || $cy < 0 || $cx >= $width || $cy >= $height) continue;
-            if ($canvas[$cy][$cx] !== $targetColor) continue;
+            if ($cx < 0 || $cy < 0 || $cx >= $width || $cy >= $height)
+                continue;
+            if ($canvas[$cy][$cx] !== $targetColor)
+                continue;
             $canvas[$cy][$cx] = $replacementColor;
             $queue[] = [$cx + 1, $cy];
             $queue[] = [$cx - 1, $cy];

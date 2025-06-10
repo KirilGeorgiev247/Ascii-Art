@@ -34,8 +34,8 @@ if ($method === 'POST') {
 
     $algorithm = $_POST['algorithm'] ?? 'sobel';
     $symbols = $_POST['symbols'] ?? '@%#*+=-:. ';
-    $colors = (int)($_POST['colors'] ?? 8);
-    $threshold = (int)($_POST['threshold'] ?? 128);
+    $colors = (int) ($_POST['colors'] ?? 8);
+    $threshold = (int) ($_POST['threshold'] ?? 128);
 
     switch ($algorithm) {
         case 'sobel':

@@ -17,7 +17,7 @@ use App\model\Like;
 use App\model\Post;
 use App\service\logger\Logger;
 
-set_error_handler(function($severity, $message, $file, $line) {
+set_error_handler(function ($severity, $message, $file, $line) {
     $logger = Logger::getInstance();
     $logger->error("PHP Error in likes API: $message", [
         'severity' => $severity,
@@ -45,7 +45,7 @@ try {
     switch ($method) {
         case 'POST':
             if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
-                $postId = (int)$pathParts[2];
+                $postId = (int) $pathParts[2];
                 $userId = apiRequireAuth();
 
                 $logger->info("Like/unlike request", [
@@ -79,9 +79,9 @@ try {
 
         case 'GET':
             if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
-                $postId = (int)$pathParts[2];
+                $postId = (int) $pathParts[2];
                 $likes = Like::getLikesForPost($postId);
-                $result = array_map(function($like) {
+                $result = array_map(function ($like) {
                     return [
                         'id' => $like->getId(),
                         'user_id' => $like->getUserId(),

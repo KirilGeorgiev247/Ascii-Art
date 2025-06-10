@@ -4,13 +4,15 @@ ob_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?= htmlspecialchars($title) ?> - ASCII Art Social</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
-    <link href="/assets/css/home.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="/assets/css/home.css" rel="stylesheet" />
 </head>
+
 <body>
     <main>
         <section class="hero-section">
@@ -38,32 +40,38 @@ ob_start();
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-image"></i></div>
                     <h3>Image Conversion</h3>
-                    <p>Upload any image and convert it to stunning ASCII art using advanced algorithms including edge detection and color reduction.</p>
+                    <p>Upload any image and convert it to stunning ASCII art using advanced algorithms including edge
+                        detection and color reduction.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-paint-brush"></i></div>
                     <h3>Creative Tools</h3>
-                    <p>Use advanced algorithms like flood fill, color changing, and edge detection to create unique ASCII masterpieces.</p>
+                    <p>Use advanced algorithms like flood fill, color changing, and edge detection to create unique
+                        ASCII masterpieces.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-users"></i></div>
                     <h3>Social Network</h3>
-                    <p>Share your ASCII art with friends, like and comment on posts, and discover amazing creations from the community.</p>
+                    <p>Share your ASCII art with friends, like and comment on posts, and discover amazing creations from
+                        the community.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-download"></i></div>
                     <h3>Import & Export</h3>
-                    <p>Export your ASCII art in multiple formats including TXT, HTML, JSON, and SVG for use anywhere.</p>
+                    <p>Export your ASCII art in multiple formats including TXT, HTML, JSON, and SVG for use anywhere.
+                    </p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-cogs"></i></div>
                     <h3>Smart Algorithms</h3>
-                    <p>Powered by Sobel, Prewitt, Roberts, and Laplacian edge detection with customizable symbol sets.</p>
+                    <p>Powered by Sobel, Prewitt, Roberts, and Laplacian edge detection with customizable symbol sets.
+                    </p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-user-circle"></i></div>
                     <h3>Personal Profiles</h3>
-                    <p>Create your profile, add friends, manage your ASCII art gallery, and build your creative community.</p>
+                    <p>Create your profile, add friends, manage your ASCII art gallery, and build your creative
+                        community.</p>
                 </div>
             </div>
         </section>
@@ -105,6 +113,7 @@ ob_start();
     </main>
     <script src="/assets/js/home.js"></script>
 </body>
+
 </html>
 <?php
 $content = ob_get_clean();

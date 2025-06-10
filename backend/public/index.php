@@ -21,7 +21,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 date_default_timezone_set('Europe/Sofia');
 
-set_error_handler(function($severity, $message, $file, $line) use ($logger) {
+set_error_handler(function ($severity, $message, $file, $line) use ($logger) {
     $logger->error("PHP Error: $message", [
         'severity' => $severity,
         'file' => $file,
@@ -29,7 +29,7 @@ set_error_handler(function($severity, $message, $file, $line) use ($logger) {
     ]);
 });
 
-set_exception_handler(function($exception) use ($logger) {
+set_exception_handler(function ($exception) use ($logger) {
     $logger->logException($exception, 'Uncaught exception');
     http_response_code(500);
     echo "<h1>Internal Server Error</h1>";

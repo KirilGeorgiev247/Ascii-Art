@@ -13,12 +13,12 @@ $logger->debug("Loading routes", [
     'timestamp' => date('Y-m-d H:i:s')
 ]);
 
-$router->get('/', function() use ($logger) {
+$router->get('/', function () use ($logger) {
     $logger->info("Home page accessed", [
         'user_id' => $_SESSION['user_id'] ?? null,
         'is_authenticated' => isset($_SESSION['user_id'])
     ]);
-    
+
     if (isset($_SESSION['user_id'])) {
         $logger->info("Authenticated user accessing home - redirecting to feed", [
             'user_id' => $_SESSION['user_id']
@@ -26,22 +26,22 @@ $router->get('/', function() use ($logger) {
         header('Location: /feed');
         exit;
     }
-    
+
     require_once __DIR__ . '/../views/home/home.php';
 });
 
-$router->get('/admin', function() use ($logger) {
+$router->get('/admin', function () use ($logger) {
     adminOnly();
     $logger->warning("Admin dashboard accessed", [
         'user_id' => $_SESSION['user_id'],
         'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
     ]);
-    
+
     require_once __DIR__ . '/../views/admin/admin.php';
 });
 
-$router->get('/login', function() use ($logger) {
+$router->get('/login', function () use ($logger) {
     guestOnly();
     $logger->info("Login page route accessed", [
         'route' => '/login',
@@ -51,7 +51,7 @@ $router->get('/login', function() use ($logger) {
     (new AuthController())->showLogin();
 });
 
-$router->post('/login', function() use ($logger) {
+$router->post('/login', function () use ($logger) {
     guestOnly();
     $logger->info("Login form submission route accessed", [
         'route' => '/login',
@@ -61,7 +61,7 @@ $router->post('/login', function() use ($logger) {
     (new AuthController())->login();
 });
 
-$router->get('/register', function() use ($logger) {
+$router->get('/register', function () use ($logger) {
     guestOnly();
     $logger->info("Registration page route accessed", [
         'route' => '/register',
@@ -71,7 +71,7 @@ $router->get('/register', function() use ($logger) {
     (new AuthController())->showRegister();
 });
 
-$router->post('/register', function() use ($logger) {
+$router->post('/register', function () use ($logger) {
     guestOnly();
     $logger->info("Registration form submission route accessed", [
         'route' => '/register',
@@ -81,7 +81,7 @@ $router->post('/register', function() use ($logger) {
     (new AuthController())->register();
 });
 
-$router->get('/logout', function() use ($logger) {
+$router->get('/logout', function () use ($logger) {
     $logger->info("Logout route accessed", [
         'route' => '/logout',
         'method' => 'GET',
@@ -90,7 +90,7 @@ $router->get('/logout', function() use ($logger) {
     (new AuthController())->logout();
 });
 
-$router->get('/feed', function() use ($logger) {
+$router->get('/feed', function () use ($logger) {
     requireAuth();
     $logger->info("Feed page route accessed", [
         'route' => '/feed',
@@ -100,7 +100,7 @@ $router->get('/feed', function() use ($logger) {
     (new FeedController())->index();
 });
 
-$router->post('/feed/post', function() use ($logger) {
+$router->post('/feed/post', function () use ($logger) {
     requireAuth();
     $logger->info("Creating new post", [
         'user_id' => $_SESSION['user_id']
@@ -108,7 +108,7 @@ $router->post('/feed/post', function() use ($logger) {
     (new FeedController())->createPost();
 });
 
-$router->post('/feed/like/{id}', function($id) use ($logger) {
+$router->post('/feed/like/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Like/unlike post", [
         'user_id' => $_SESSION['user_id'],
@@ -117,12 +117,12 @@ $router->post('/feed/like/{id}', function($id) use ($logger) {
     require_once __DIR__ . '/../src/api/likes.php';
 });
 
-$router->get('/feed/like/{id}', function($id) {
+$router->get('/feed/like/{id}', function ($id) {
     requireAuth();
     require_once __DIR__ . '/../src/api/likes.php';
 });
 
-$router->delete('/feed/post/{id}', function($id) use ($logger) {
+$router->delete('/feed/post/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Deleting post", [
         'user_id' => $_SESSION['user_id'],
@@ -131,7 +131,7 @@ $router->delete('/feed/post/{id}', function($id) use ($logger) {
     (new FeedController())->deletePost($id);
 });
 
-$router->get('/feed/search', function() use ($logger) {
+$router->get('/feed/search', function () use ($logger) {
     requireAuth();
     $logger->info("Searching posts", [
         'user_id' => $_SESSION['user_id'],
@@ -140,7 +140,7 @@ $router->get('/feed/search', function() use ($logger) {
     (new FeedController())->search();
 });
 
-$router->get('/profile', function() use ($logger) {
+$router->get('/profile', function () use ($logger) {
     requireAuth();
     $logger->info("Profile page accessed (own)", [
         'user_id' => $_SESSION['user_id']
@@ -148,7 +148,7 @@ $router->get('/profile', function() use ($logger) {
     (new ProfileController())->viewUser($_SESSION['user_id']);
 });
 
-$router->get('/profile/{id}', function($id) use ($logger) {
+$router->get('/profile/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Profile page accessed (other user)", [
         'user_id' => $_SESSION['user_id'],
@@ -157,7 +157,7 @@ $router->get('/profile/{id}', function($id) use ($logger) {
     (new ProfileController())->viewUser($id);
 });
 
-$router->post('/profile/friend/add/{id}', function($id) use ($logger) {
+$router->post('/profile/friend/add/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Sending friend request", [
         'user_id' => $_SESSION['user_id'],
@@ -166,7 +166,7 @@ $router->post('/profile/friend/add/{id}', function($id) use ($logger) {
     (new ProfileController())->addFriend($id);
 });
 
-$router->post('/profile/friend/accept/{id}', function($id) use ($logger) {
+$router->post('/profile/friend/accept/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Accepting friend request", [
         'user_id' => $_SESSION['user_id'],
@@ -175,7 +175,7 @@ $router->post('/profile/friend/accept/{id}', function($id) use ($logger) {
     (new ProfileController())->acceptFriend($id);
 });
 
-$router->delete('/profile/friend/remove/{id}', function($id) use ($logger) {
+$router->delete('/profile/friend/remove/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Removing friend", [
         'user_id' => $_SESSION['user_id'],
@@ -184,7 +184,7 @@ $router->delete('/profile/friend/remove/{id}', function($id) use ($logger) {
     (new ProfileController())->removeFriend($id);
 });
 
-$router->get('/profile/{id}/friends', function($id) use ($logger) {
+$router->get('/profile/{id}/friends', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Viewing friends list", [
         'user_id' => $_SESSION['user_id'],
@@ -193,7 +193,7 @@ $router->get('/profile/{id}/friends', function($id) use ($logger) {
     (new ProfileController())->friends($id);
 });
 
-$router->get('/search/users', function() use ($logger) {
+$router->get('/search/users', function () use ($logger) {
     requireAuth();
     $logger->info("Searching users", [
         'user_id' => $_SESSION['user_id'],
@@ -202,67 +202,67 @@ $router->get('/search/users', function() use ($logger) {
     (new ProfileController())->searchUsers();
 });
 
-$router->get('/api/posts', function() use ($logger) {
+$router->get('/api/posts', function () use ($logger) {
     $logger->debug("API: Getting posts");
     header('Content-Type: application/json');
     require_once __DIR__ . '/../src/api/posts.php';
 });
 
-$router->post('/api/posts', function() use ($logger) {
+$router->post('/api/posts', function () use ($logger) {
     $logger->debug("API: Posting to posts endpoint");
     header('Content-Type: application/json');
     require_once __DIR__ . '/../api/posts.php';
 });
 
-$router->get('/api/friends', function() use ($logger) {
+$router->get('/api/friends', function () use ($logger) {
     requireAuth();
     $logger->debug("API: Getting friends list");
     header('Content-Type: application/json');
     (new ProfileController())->apiFriends();
 });
 
-$router->get('/api/friend-requests', function() use ($logger) {
+$router->get('/api/friend-requests', function () use ($logger) {
     requireAuth();
     $logger->debug("API: Getting friend requests");
     header('Content-Type: application/json');
     (new ProfileController())->apiFriendRequests();
 });
 
-$router->get('/api/users/search', function() use ($logger) {
+$router->get('/api/users/search', function () use ($logger) {
     requireAuth();
     $logger->debug("API: Searching users");
     header('Content-Type: application/json');
     require_once __DIR__ . '/../src/api/users.php';
 });
 
-$router->get('/api/users', function() {
+$router->get('/api/users', function () {
     require_once __DIR__ . '/../src/api/users.php';
 });
 
-$router->post('/api/friends/add', function() {
+$router->post('/api/friends/add', function () {
     require_once __DIR__ . '/../src/api/friends.php';
 });
 
-$router->post('/api/friends/accept', function() {
+$router->post('/api/friends/accept', function () {
     require_once __DIR__ . '/../src/api/friends.php';
 });
 
-$router->post('/api/friends/reject', function() {
+$router->post('/api/friends/reject', function () {
     require_once __DIR__ . '/../src/api/friends.php';
 });
 
-$router->post('/api/friends/remove', function() {
+$router->post('/api/friends/remove', function () {
     require_once __DIR__ . '/../src/api/friends.php';
 });
 
-$router->get('/uploads/{filename}', function($filename) use ($logger) {
+$router->get('/uploads/{filename}', function ($filename) use ($logger) {
     $logger->debug("Serving file", ['filename' => $filename]);
     $filePath = __DIR__ . '/../uploads/' . $filename;
     if (file_exists($filePath)) {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $filePath);
         finfo_close($finfo);
-        
+
         header('Content-Type: ' . $mimeType);
         header('Content-Length: ' . filesize($filePath));
         readfile($filePath);
@@ -273,20 +273,20 @@ $router->get('/uploads/{filename}', function($filename) use ($logger) {
     }
 });
 
-$router->get('/draw', function() {
+$router->get('/draw', function () {
     requireAuth();
     (new DrawController())->index();
 });
-$router->post('/draw/save', function() {
+$router->post('/draw/save', function () {
     requireAuth();
     (new DrawController())->save();
 });
-$router->post('/api/draw', function() {
+$router->post('/api/draw', function () {
     requireAuth();
     require_once __DIR__ . '/../src/api/draw.php';
 });
 
-$router->get('/add_posts', function() {
+$router->get('/add_posts', function () {
     requireAuth();
     $userId = $_SESSION['user_id'] ?? null;
     $logger = Logger::getInstance();
@@ -294,20 +294,20 @@ $router->get('/add_posts', function() {
     require_once __DIR__ . '/../src/api/posts.php';
 });
 
-$router->get('/image', function() {
+$router->get('/image', function () {
     requireAuth();
     (new ConvertController())->index();
 });
-$router->post('/image/save', function() {
+$router->post('/image/save', function () {
     requireAuth();
     (new ConvertController())->save();
 });
-$router->post('/api/convert', function() {
+$router->post('/api/convert', function () {
     requireAuth();
     require_once __DIR__ . '/../src/api/convert.php';
 });
 
-$router->delete('/profile/post/{id}', function($id) use ($logger) {
+$router->delete('/profile/post/{id}', function ($id) use ($logger) {
     requireAuth();
     $logger->info("Deleting post from profile", [
         'user_id' => $_SESSION['user_id'],

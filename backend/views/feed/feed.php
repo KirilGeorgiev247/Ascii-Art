@@ -73,13 +73,13 @@ ob_start();
                         <span id="asciiZoomValue-<?= $postId ?>">12px</span>
                     </div>
 
-                    <pre id="asciiOutput-<?= $postId ?>" class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
+                    <pre id="asciiOutput-<?= $postId ?>"
+                        class="ascii-output"><?= htmlspecialchars($post->getAsciiContent() ?: $post->getContent()) ?></pre>
 
                     <div class="post-interactions">
                         <div class="interaction-buttons">
-                            <button class="interaction-btn like-btn<?= $liked ? ' liked' : '' ?>" 
-                                    id="like-btn-<?= $postId ?>"
-                                    onclick="likePost(<?= $postId ?>)">
+                            <button class="interaction-btn like-btn<?= $liked ? ' liked' : '' ?>"
+                                id="like-btn-<?= $postId ?>" onclick="likePost(<?= $postId ?>)">
                                 <i class="fas fa-heart"></i>
                                 <span id="likes-<?= $postId ?>"><?= $post->getLikesCount() ?></span>
                             </button>

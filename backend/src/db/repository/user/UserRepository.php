@@ -63,7 +63,7 @@ class UserRepository
             'created_at' => $createdAt
         ]);
 
-        $id = (int)$db->getConnection()->lastInsertId();
+        $id = (int) $db->getConnection()->lastInsertId();
         return new User($id, $username, $email, $passwordHash, null, null, $createdAt);
     }
 
@@ -147,7 +147,7 @@ class UserRepository
     private static function rowToUser(array $row): User
     {
         return new User(
-            (int)$row['id'],
+            (int) $row['id'],
             $row['username'],
             $row['email'],
             $row['password_hash'],

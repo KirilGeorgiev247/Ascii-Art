@@ -10,7 +10,6 @@ function connectWebSocket() {
       console.log("WebSocket connected");
       updateConnectionStatus(true);
       reconnectAttempts = 0;
-
     };
 
     ws.onmessage = function (event) {
@@ -85,7 +84,7 @@ function addPost(post) {
   fetch("/add_posts", {
     method: "GET",
     headers: {
-      Accept: "application/json", 
+      Accept: "application/json",
     },
   })
     .then((response) => {
@@ -103,7 +102,7 @@ function addPost(post) {
 function overwriteFeedWithPosts(posts) {
   const container = document.getElementById("postsContainer");
   if (!container) return;
-  container.innerHTML = ""; 
+  container.innerHTML = "";
 
   if (!posts || posts.length === 0) {
     container.innerHTML = `
@@ -238,9 +237,7 @@ function updateConnectionStatus(connected) {
   }
 }
 
-function addNewPost(post) {
-
-}
+function addNewPost(post) {}
 
 function createPostElement(post) {
   const div = document.createElement("div");
@@ -270,7 +267,6 @@ function createPostElement(post) {
 
   return div;
 }
-
 
 function createPost() {
   const postContentElement = document.getElementById("postContent");
@@ -332,17 +328,17 @@ function likePost(postId) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
+      Accept: "application/json",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
         updatePostLikes(postId, data.likes_count);
         toggleLikeButton(postId, data.action === "liked");
-        sendMessage("like_post", {postId, likesCount: data.likes_count});
+        sendMessage("like_post", { postId, likesCount: data.likes_count });
       } else {
-        showDialog(data.error || "Failed to like post", "error"); 
+        showDialog(data.error || "Failed to like post", "error");
       }
     })
     .catch((error) => {

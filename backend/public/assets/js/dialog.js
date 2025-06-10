@@ -4,7 +4,12 @@ function showDialog(message, type = "info", options = {}) {
   const dialogMessage = document.getElementById("dialogMessage");
   const dialogOkBtn = document.getElementById("dialogOkBtn");
 
-  dialog.classList.remove("dialog-success", "dialog-error", "dialog-info", "dialog-question");
+  dialog.classList.remove(
+    "dialog-success",
+    "dialog-error",
+    "dialog-info",
+    "dialog-question"
+  );
   dialog.classList.add(`dialog-${type}`);
 
   let icon = "";
