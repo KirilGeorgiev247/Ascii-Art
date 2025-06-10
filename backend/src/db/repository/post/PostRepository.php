@@ -246,4 +246,22 @@ class PostRepository
             return [];
         }
     }
+
+    private static function rowToPost(array $row): Post
+    {
+        return new Post(
+            (int) $row['id'],
+            (int) $row['user_id'],
+            $row['title'],
+            $row['content'],
+            $row['type'],
+            $row['image_path'] ?? null,
+            $row['ascii_content'] ?? null,
+            $row['visibility'],
+            (int) $row['likes_count'],
+            $row['created_at'],
+            $row['updated_at'],
+            $row['username'] ?? null
+        );
+    }
 }
