@@ -19,7 +19,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    // Accept base64 or file upload
     if (isset($_FILES['image'])) {
         $imgPath = $_FILES['image']['tmp_name'];
         $img = imagecreatefromstring(file_get_contents($imgPath));
@@ -35,8 +34,8 @@ if ($method === 'POST') {
 
     $algorithm = $_POST['algorithm'] ?? 'sobel';
     $symbols = $_POST['symbols'] ?? '@%#*+=-:. ';
-    $colors = (int)($_POST['colors'] ?? 8);
-    $threshold = (int)($_POST['threshold'] ?? 128);
+    $colors = (int) ($_POST['colors'] ?? 8);
+    $threshold = (int) ($_POST['threshold'] ?? 128);
 
     switch ($algorithm) {
         case 'sobel':

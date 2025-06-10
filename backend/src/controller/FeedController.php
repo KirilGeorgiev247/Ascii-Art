@@ -2,11 +2,9 @@
 
 namespace App\controller;
 
-use App\db\repository\post\PostRepository;
 use App\model\Post;
 use App\model\User;
 use App\model\Friend;
-use App\model\Like;
 use App\service\logger\Logger;
 use Exception;
 
@@ -42,14 +40,12 @@ class FeedController
                 'username' => $user->getUsername()
             ]);
 
-            // Get posts for the user's feed (own posts + friends' posts + public posts)
             $posts = Post::getFeedForUser($userId, 20);
             $logger->info("Feed posts loaded", [
                 'user_id' => $userId,
                 'post_count' => count($posts)
             ]);
 
-            // Get friend requests
             $pendingRequests = Friend::getPendingRequests($userId);
             $logger->debug("Friend requests loaded", [
                 'user_id' => $userId,
@@ -160,76 +156,6 @@ class FeedController
         }
     }
 
-    /**
-     * Like a post by ID
-     * Method signature updated to match web.php route parameter
-     */
-    public function likePost($id)
-    {
-        $logger = Logger::getInstance();
-        $logger->logRequest($_SERVER['REQUEST_METHOD'], '/feed/like/' . $id);
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id'])) {
-            $logger->warning("Unauthorized like attempt");
-            http_response_code(401);
-            echo json_encode(['error' => 'Unauthorized']);
-            exit;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-            exit;
-        }
-
-        $userId = $_SESSION['user_id'];
-        $postId = $id;
-
-        if (!$postId) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Post ID required']);
-            exit;
-        }
-
-        try {
-            // Use static methods from Like model
-            $isLiked = Like::isPostLikedByUser($userId, $postId);
-
-            if ($isLiked) {
-                // Unlike
-                Like::unlikePost($userId, $postId);
-                $action = 'unliked';
-            } else {
-                // Like
-                Like::likePost($userId, $postId);
-                $action = 'liked';
-            }
-
-            // Get updated like count
-            $post = Post::findById($postId);
-            $likesCount = $post ? $post->getLikesCount() : 0;
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'action' => $action,
-                'likes_count' => $likesCount
-            ]);
-
-        } catch (Exception $e) {
-            $logger->logException($e, 'Like operation failed');
-            http_response_code(500);
-            echo json_encode(['error' => 'Failed to update like']);
-        }
-    }
-
-    /**
-     * Delete a post by ID
-     * Method signature updated to match web.php route parameter
-     */
     public function deletePost($id)
     {
         $logger = Logger::getInstance();
@@ -273,7 +199,6 @@ class FeedController
                 exit;
             }
 
-            // Check if user owns the post
             if ($post->getUserId() !== $userId) {
                 $logger->warning("Post deletion failed - unauthorized", [
                     'user_id' => $userId,
@@ -343,7 +268,6 @@ class FeedController
         ]);
 
         if (!empty($query)) {
-            // Use Post model instead of direct database access
             $posts = Post::searchByQuery($query);
 
             $logger->info("Search results", [

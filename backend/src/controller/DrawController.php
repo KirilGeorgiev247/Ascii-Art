@@ -8,7 +8,8 @@ class DrawController
 {
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE)
+            session_start();
         if (!isset($_SESSION['user_id'])) {
             header('Location: /login');
             exit;
@@ -19,7 +20,8 @@ class DrawController
 
     public function save()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE)
+            session_start();
         if (!isset($_SESSION['user_id'])) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Not authenticated']);
@@ -34,7 +36,7 @@ class DrawController
             $userId,
             $title,
             $asciiContent,
-            'drawing', // type
+            'drawing',
             $imagePath,
             $asciiContent,
             'public'

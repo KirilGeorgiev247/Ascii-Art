@@ -11,9 +11,8 @@ class ThresholdService
         $ascii = '';
         $chars = str_split($symbols);
 
-        // Ensure at least 2 symbols for binary thresholding
         if (count($chars) < 2) {
-            $chars = ['@', ' ']; 
+            $chars = ['@', ' '];
         }
 
         for ($y = 0; $y < $height; $y += 2) {
@@ -23,10 +22,8 @@ class ThresholdService
                 $g = ($rgb >> 8) & 0xFF;
                 $b = $rgb & 0xFF;
 
-                // Improved grayscale formula
-                $gray = (int)($r * 0.3 + $g * 0.59 + $b * 0.11);
+                $gray = (int) ($r * 0.3 + $g * 0.59 + $b * 0.11);
 
-                // Threshold comparison
                 $ascii .= $gray > $threshold ? $chars[1] : $chars[0];
             }
             $ascii .= "\n";

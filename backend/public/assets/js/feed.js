@@ -2,7 +2,6 @@ let ws = null;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 
-// WebSocket connection
 function connectWebSocket() {
   try {
     ws = new WebSocket("ws://localhost:8080");
@@ -11,7 +10,6 @@ function connectWebSocket() {
       console.log("WebSocket connected");
       updateConnectionStatus(true);
       reconnectAttempts = 0;
-
     };
 
     ws.onmessage = function (event) {
@@ -33,7 +31,6 @@ function connectWebSocket() {
       console.log("WebSocket disconnected");
       updateConnectionStatus(false);
 
-      // Attempt to reconnect
       if (reconnectAttempts < maxReconnectAttempts) {
         setTimeout(() => {
           reconnectAttempts++;
@@ -84,20 +81,14 @@ function handleWebSocketMessage(data) {
 function addPost(post) {
   console.log("Tuka sme:", post);
 
-  // Fetch all posts for the feed (GET /api/posts?feed=1)
   fetch("/add_posts", {
     method: "GET",
     headers: {
-      Accept: "application/json", // Optional but good to include
+      Accept: "application/json",
     },
   })
     .then((response) => {
-      // console.log('Response from add_posts -> ' + response.json());
-      // console.log(response);
       return response.json();
-      //   console.log("Ayde responsa:", JSON.stringify(response));
-      //   console.log("Ayde responsa:" + response.status);
-      //   console.log("Ayde responsa:" + response.json);
     })
     .then((posts) => {
       console.log("Posts fetched:", posts);
@@ -108,11 +99,10 @@ function addPost(post) {
     });
 }
 
-// Helper to overwrite the feed with new posts
 function overwriteFeedWithPosts(posts) {
   const container = document.getElementById("postsContainer");
   if (!container) return;
-  container.innerHTML = ""; // Clear current posts
+  container.innerHTML = "";
 
   if (!posts || posts.length === 0) {
     container.innerHTML = `
@@ -129,7 +119,6 @@ function overwriteFeedWithPosts(posts) {
     container.appendChild(postElement);
   });
 
-  // Reinitialize zoom sliders for all posts
   posts.forEach((post) => {
     if (window.setupAsciiZoomSlider) {
       window.setupAsciiZoomSlider(
@@ -199,7 +188,6 @@ function createFeedPostElement(post) {
     </div>
   `;
 
-  // Init zoom
   if (window.setupAsciiZoomSlider) {
     window.setupAsciiZoomSlider(
       `asciiOutput-${postId}`,
@@ -211,7 +199,6 @@ function createFeedPostElement(post) {
   return element;
 }
 
-// Utility to escape HTML
 function escapeHtml(text) {
   if (!text) return "";
   return text.replace(/[&<>"']/g, function (m) {
@@ -225,7 +212,6 @@ function escapeHtml(text) {
   });
 }
 
-// Utility to format timestamp (matches PHP date format in feed.php)
 function formatTimestamp(ts) {
   if (!ts) return "";
   const date = new Date(ts);
@@ -243,6 +229,7 @@ function updateConnectionStatus(connected) {
   const status = document.getElementById("connectionStatus");
   if (connected) {
     status.className = "connection-status connected";
+    xw;
     status.innerHTML = '<i class="fas fa-circle"></i> <span>Connected</span>';
   } else {
     status.className = "connection-status disconnected";
@@ -251,18 +238,7 @@ function updateConnectionStatus(connected) {
   }
 }
 
-function addNewPost(post) {
-  // console.log('Tuka sme:', post);
-  // const container = document.getElementById('postsContainer');
-  // const postElement = createPostElement(post);
-  // postElement.classList.add('new-post');
-  // // Insert at the beginning
-  // container.insertBefore(postElement, container.firstChild);
-  // // Remove the new-post class after animation
-  // setTimeout(() => {
-  //     postElement.classList.remove('new-post');
-  // }, 300);
-}
+function addNewPost(post) {}
 
 function createPostElement(post) {
   const div = document.createElement("div");
@@ -293,7 +269,6 @@ function createPostElement(post) {
   return div;
 }
 
-
 function createPost() {
   const postContentElement = document.getElementById("postContent");
   if (!postContentElement) {
@@ -308,7 +283,6 @@ function createPost() {
     return;
   }
 
-  // Send via WebSocket for real-time updates
   try {
     if (ws && ws.readyState === WebSocket.OPEN) {
       sendMessage("create_post", {
@@ -321,7 +295,6 @@ function createPost() {
     console.error("Failed to send WebSocket message:", error);
   }
 
-  // Also send to server via HTTP
   fetch("/api/posts", {
     method: "POST",
     headers: {
@@ -338,7 +311,6 @@ function createPost() {
       if (data.success) {
         document.getElementById("postContent").value = "";
 
-        // Add the new post to the feed immediately
         addNewPost({
           id: data.id,
           username: data.username,
@@ -357,18 +329,17 @@ function likePost(postId) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
+      Accept: "application/json",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
         updatePostLikes(postId, data.likes_count);
         toggleLikeButton(postId, data.action === "liked");
-        sendMessage("like_post", {postId, likesCount: data.likes_count});
+        sendMessage("like_post", { postId, likesCount: data.likes_count });
       } else {
-        showDialog(data.error || "Failed to like post", "error"); 
-        // on ok sendMessage
+        showDialog(data.error || "Failed to like post", "error");
       }
     })
     .catch((error) => {

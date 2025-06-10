@@ -5,7 +5,6 @@ const userId = window.profileUserId;
 const profileUserId = window.profileProfileUserId;
 const isOwnProfile = window.profileIsOwnProfile;
 
-// WebSocket connection
 function connectWebSocket() {
   try {
     ws = new WebSocket("ws://localhost:8080");
@@ -35,7 +34,6 @@ function connectWebSocket() {
       console.log("WebSocket disconnected");
       updateConnectionStatus(false);
 
-      // Attempt to reconnect
       if (reconnectAttempts < maxReconnectAttempts) {
         setTimeout(() => {
           reconnectAttempts++;
@@ -95,10 +93,8 @@ function updateConnectionStatus(connected) {
   }
 }
 
-// TODO: delete
 function likePost(postId) {
   console.log("Like post:", postId);
-  //   sendMessage("like_post");
 }
 
 function sharePost(postId) {
@@ -136,7 +132,7 @@ function deletePost(postId) {
               `[data-post-id="${postId}"]`
             );
             if (postElem) postElem.remove();
-            sendMessage('add_post');
+            sendMessage("add_post");
             showDialog("Post deleted successfully.", "success", {
               onOk: function () {
                 location.reload();

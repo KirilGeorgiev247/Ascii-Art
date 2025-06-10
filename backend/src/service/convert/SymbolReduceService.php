@@ -17,8 +17,8 @@ class SymbolReduceService
                 $r = ($rgb >> 16) & 0xFF;
                 $g = ($rgb >> 8) & 0xFF;
                 $b = $rgb & 0xFF;
-                $gray = (int)(($r + $g + $b) / 3);
-                $idx = (int)($gray / 255 * (count($chars)-1));
+                $gray = (int) (($r + $g + $b) / 3);
+                $idx = (int) ($gray / 255 * (count($chars) - 1));
                 $ascii .= $chars[$idx];
             }
             $ascii .= "\n";

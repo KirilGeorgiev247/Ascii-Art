@@ -1,7 +1,10 @@
 .custom-dialog {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,11 +19,12 @@
   background: #fff;
   border-radius: 10px;
   padding: 2rem 2.5rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   max-width: 90vw;
   min-width: 300px;
   text-align: center;
-  border-top: 8px solid var(--primary-color, #667eea); /* default for info */
+  border-top: 8px solid var(--primary-color, #667eea);
+  /* default for info */
   transition: border-color 0.2s;
 }
 
@@ -64,6 +68,7 @@
 .dialog-success .custom-dialog-content {
   border-top-color: #28a745;
 }
+
 .dialog-success .custom-dialog-title i {
   color: #28a745;
 }
@@ -72,6 +77,7 @@
 .dialog-error .custom-dialog-content {
   border-top-color: #dc3545;
 }
+
 .dialog-error .custom-dialog-title i {
   color: #dc3545;
 }
@@ -80,6 +86,7 @@
 .dialog-info .custom-dialog-content {
   border-top-color: #667eea;
 }
+
 .dialog-info .custom-dialog-title i {
   color: #667eea;
 }

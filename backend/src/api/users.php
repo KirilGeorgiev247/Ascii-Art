@@ -36,21 +36,21 @@ $pathParts = explode('/', trim($path, '/'));
 switch ($method) {
     case 'GET':
         if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
-            $userId = (int)$pathParts[2];
-            
+            $userId = (int) $pathParts[2];
+
             $logger->info("Fetching user profile", [
                 'user_id' => $userId,
                 'requestor_id' => $_SESSION['user_id'] ?? null
             ]);
-            
+
             $startTime = microtime(true);
             $user = User::findById($userId);
             $userLookupDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('user_profile_lookup', $userLookupDuration, [
                 'user_id' => $userId
             ]);
-            
+
             if (!$user) {
                 $logger->warning("User profile not found", [
                     'user_id' => $userId,
@@ -59,21 +59,21 @@ switch ($method) {
                 ]);
                 apiSendResponse(['error' => 'User not found'], 404);
             }
-            
+
             $logger->info("Fetching user posts", [
                 'user_id' => $userId,
                 'username' => $user->getUsername()
             ]);
-            
+
             $startTime = microtime(true);
             $posts = Post::findByUserId($userId);
             $postsDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('user_posts_fetch', $postsDuration, [
                 'user_id' => $userId,
                 'posts_count' => count($posts)
             ]);
-            
+
             $logger->info("User profile fetched successfully", [
                 'user_id' => $userId,
                 'username' => $user->getUsername(),
@@ -82,7 +82,7 @@ switch ($method) {
                 'posts_time_ms' => round($postsDuration, 2),
                 'total_time_ms' => round($userLookupDuration + $postsDuration, 2)
             ]);
-            
+
             apiSendResponse([
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
@@ -91,7 +91,7 @@ switch ($method) {
                 'profile_picture' => $user->getProfilePicture(),
                 'created_at' => $user->getCreatedAt(),
                 'posts_count' => count($posts),
-                'posts' => array_map(function($post) {
+                'posts' => array_map(function ($post) {
                     return [
                         'id' => $post->getId(),
                         'title' => $post->getTitle(),
@@ -103,22 +103,22 @@ switch ($method) {
                     ];
                 }, $posts)
             ]);
-            
+
         } elseif (isset($_GET['current'])) {
             $userId = apiRequireAuth();
-            
+
             $logger->info("Fetching current user profile", [
                 'user_id' => $userId
             ]);
-            
+
             $startTime = microtime(true);
             $user = User::findById($userId);
             $userLookupDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('current_user_lookup', $userLookupDuration, [
                 'user_id' => $userId
             ]);
-            
+
             if (!$user) {
                 $logger->error("Current user not found in database", [
                     'user_id' => $userId,
@@ -127,16 +127,16 @@ switch ($method) {
                 ]);
                 apiSendResponse(['error' => 'User not found'], 404);
             }
-            
+
             $startTime = microtime(true);
             $posts = Post::findByUserId($userId);
             $postsDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('current_user_posts_fetch', $postsDuration, [
                 'user_id' => $userId,
                 'posts_count' => count($posts)
             ]);
-            
+
             $logger->info("Current user profile fetched successfully", [
                 'user_id' => $userId,
                 'username' => $user->getUsername(),
@@ -144,7 +144,7 @@ switch ($method) {
                 'lookup_time_ms' => round($userLookupDuration, 2),
                 'posts_time_ms' => round($postsDuration, 2)
             ]);
-            
+
             apiSendResponse([
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
@@ -153,7 +153,7 @@ switch ($method) {
                 'profile_picture' => $user->getProfilePicture(),
                 'created_at' => $user->getCreatedAt(),
                 'posts_count' => count($posts),
-                'posts' => array_map(function($post) {
+                'posts' => array_map(function ($post) {
                     return [
                         'id' => $post->getId(),
                         'title' => $post->getTitle(),
@@ -165,38 +165,38 @@ switch ($method) {
                     ];
                 }, $posts)
             ]);
-            
+
         } else {
             $query = $_GET['search'] ?? '';
-            
+
             $logger->info("User search request", [
                 'query' => $query,
                 'requestor_id' => $_SESSION['user_id'] ?? null
             ]);
-            
+
             if (empty($query)) {
                 $logger->warning("User search failed - empty query", [
                     'requestor_id' => $_SESSION['user_id'] ?? null
                 ]);
                 apiSendResponse(['error' => 'Search query required'], 400);
             }
-            
+
             $logger->info("Performing user search", [
                 'query' => $query,
                 'query_length' => strlen($query)
             ]);
-            
+
             $startTime = microtime(true);
             $users = User::searchByUsername($query);
-            
+
             $searchDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('user_search', $searchDuration, [
                 'query' => $query,
                 'results_count' => count($users)
             ]);
-            
-            $result = array_map(function($user) {
+
+            $result = array_map(function ($user) {
                 return [
                     'id' => $user->getId(),
                     'username' => $user->getUsername(),
@@ -205,26 +205,26 @@ switch ($method) {
                     'friendship_status' => Friend::getFriendshipStatus($_SESSION['user_id'] ?? null, $user->getId())
                 ];
             }, $users);
-            
+
             $logger->info("User search completed successfully", [
                 'query' => $query,
                 'results_count' => count($users),
                 'search_time_ms' => round($searchDuration, 2)
             ]);
-            
+
             apiSendResponse($result);
         }
         break;
     case 'PUT':
         if (isset($pathParts[2]) && is_numeric($pathParts[2])) {
-            $profileUserId = (int)$pathParts[2];
+            $profileUserId = (int) $pathParts[2];
             $currentUserId = apiRequireAuth();
-            
+
             $logger->info("User profile update attempt", [
                 'profile_user_id' => $profileUserId,
                 'current_user_id' => $currentUserId
             ]);
-            
+
             if ($profileUserId !== $currentUserId) {
                 $logger->warning("Unauthorized profile update attempt", [
                     'profile_user_id' => $profileUserId,
@@ -233,15 +233,15 @@ switch ($method) {
                 ]);
                 apiSendResponse(['error' => 'Unauthorized'], 403);
             }
-            
+
             $startTime = microtime(true);
             $user = User::findById($currentUserId);
             $userLookupDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('profile_user_lookup', $userLookupDuration, [
                 'user_id' => $currentUserId
             ]);
-            
+
             if (!$user) {
                 $logger->error("User not found for profile update", [
                     'user_id' => $currentUserId,
@@ -249,20 +249,20 @@ switch ($method) {
                 ]);
                 apiSendResponse(['error' => 'User not found'], 404);
             }
-            
+
             $input = json_decode(file_get_contents('php://input'), true);
-            
+
             $logger->info("Processing profile update", [
                 'user_id' => $currentUserId,
                 'username' => $user->getUsername(),
                 'update_fields' => array_keys($input ?? []),
                 'input_data' => $input
             ]);
-            
+
             $changes = [];
             $originalBio = $user->getBio();
             $originalProfilePicture = $user->getProfilePicture();
-            
+
             if (isset($input['bio'])) {
                 $user->setBio($input['bio']);
                 $changes['bio'] = [
@@ -270,7 +270,7 @@ switch ($method) {
                     'new' => $input['bio']
                 ];
             }
-            
+
             if (isset($input['profile_picture'])) {
                 $user->setProfilePicture($input['profile_picture']);
                 $changes['profile_picture'] = [
@@ -278,22 +278,22 @@ switch ($method) {
                     'new' => $input['profile_picture']
                 ];
             }
-            
+
             $logger->info("Saving profile changes", [
                 'user_id' => $currentUserId,
                 'changes' => $changes,
                 'changes_count' => count($changes)
             ]);
-            
+
             $startTime = microtime(true);
             $saveSuccess = $user->save();
             $saveDuration = (microtime(true) - $startTime) * 1000;
-            
+
             $logger->logPerformance('profile_save', $saveDuration, [
                 'user_id' => $currentUserId,
                 'changes_count' => count($changes)
             ]);
-            
+
             if ($saveSuccess) {
                 $logger->info("Profile updated successfully", [
                     'user_id' => $currentUserId,
@@ -301,7 +301,7 @@ switch ($method) {
                     'changes' => $changes,
                     'save_time_ms' => round($saveDuration, 2)
                 ]);
-                
+
                 apiSendResponse([
                     'id' => $user->getId(),
                     'username' => $user->getUsername(),
@@ -318,7 +318,7 @@ switch ($method) {
                     'save_time_ms' => round($saveDuration, 2),
                     'reason' => 'Database save operation failed'
                 ]);
-                
+
                 apiSendResponse(['error' => 'Failed to update profile'], 500);
             }
         } else {

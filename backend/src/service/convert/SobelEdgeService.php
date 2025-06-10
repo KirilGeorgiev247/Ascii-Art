@@ -26,7 +26,7 @@ class SobelEdgeService
                         $g = ($rgb >> 8) & 0xFF;
                         $b = $rgb & 0xFF;
 
-                        $gray = (int)($r * 0.3 + $g * 0.59 + $b * 0.11);
+                        $gray = (int) ($r * 0.3 + $g * 0.59 + $b * 0.11);
 
                         $sumX += $gx[$ky + 1][$kx + 1] * $gray;
                         $sumY += $gy[$ky + 1][$kx + 1] * $gray;
@@ -36,8 +36,8 @@ class SobelEdgeService
                 $magnitude = sqrt($sumX * $sumX + $sumY * $sumY);
                 $magnitude = min(255, $magnitude);
 
-                $index = (int)(($magnitude / 255) * (count($chars) - 1));
-                $index = max(0, min($index, count($chars) - 1)); // protect against out-of-bounds
+                $index = (int) (($magnitude / 255) * (count($chars) - 1));
+                $index = max(0, min($index, count($chars) - 1));
 
                 $ascii .= $chars[$index];
             }

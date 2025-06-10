@@ -4,7 +4,6 @@ namespace App\controller;
 
 use App\model\User;
 use App\model\Post;
-use App\model\Friend;
 use App\db\repository\friend\FriendRepository;
 use App\service\logger\Logger;
 use Exception;
@@ -30,7 +29,7 @@ class ProfileController
         }
 
         $currentUserId = $_SESSION['user_id'];
-        $profileUserId = $userId ?? $currentUserId; // This is the profile being viewed
+        $profileUserId = $userId ?? $currentUserId;
         $isOwnProfile = ($currentUserId === $profileUserId);
 
         $logger->info("Loading profile", [
@@ -92,7 +91,6 @@ class ProfileController
         ]);
 
         try {
-            // FIX: Always get friends of the profile being viewed
             $friends = $this->friendRepository->getFriends($profileUserId);
             $logger->debug("Friends list loaded", [
                 'profile_user_id' => $profileUserId,
@@ -384,47 +382,11 @@ class ProfileController
         }
     }
 
-    // TODO: delete or use
-    // public function friendsList()
-    // {
-    //     $logger = Logger::getInstance();
-    //     $logger->logRequest($_SERVER['REQUEST_METHOD'], '/profile/friendsList');
-
-    //     // session_start();
-    //     if (!isset($_SESSION['user_id'])) {
-    //         $logger->warning("Unauthorized access to friends list - redirecting to login");
-    //         header('Location: /login');
-    //         exit;
-    //     }
-
-    //     $userId = $_SESSION['user_id'];
-    //     $logger->info("Loading friends list", ['user_id' => $userId]);
-
-    //     try {
-    //         $friends = $this->friendRepository->getFriends($userId);
-    //         $pendingRequests = $this->friendRepository->getPendingRequests($userId);
-
-    //         $logger->info("Friends list loaded successfully", [
-    //             'user_id' => $userId,
-    //             'friends_count' => count($friends),
-    //             'pending_requests_count' => count($pendingRequests)
-    //         ]);
-    //     } catch (Exception $e) {
-    //         $logger->logException($e, 'Failed to load friends list');
-    //         $friends = [];
-    //         $pendingRequests = [];
-    //     }
-
-    //     require_once dirname(dirname(__DIR__)) . '/views/friends.php';
-    // }
-
     public function searchUsers()
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/profile/searchUsers');
 
-        // TODO: check if we need this
-        // session_start();
         if (!isset($_SESSION['user_id'])) {
             $logger->warning("Unauthorized access to user search - redirecting to login");
             header('Location: /login');
@@ -442,7 +404,6 @@ class ProfileController
 
             try {
                 $users = User::searchByUsername($query);
-                // Optionally, you can enrich with friendship status using $this->friendRepository
             } catch (Exception $e) {
                 $logger->logException($e, 'User search failed');
                 $users = [];

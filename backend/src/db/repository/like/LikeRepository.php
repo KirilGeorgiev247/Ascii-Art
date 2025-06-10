@@ -44,10 +44,8 @@ class LikeRepository
             $db = Database::getInstance();
             $conn = $db->getConnection();
 
-            // Begin transaction
             $conn->beginTransaction();
 
-            // Insert like record
             $stmt = $conn->prepare(
                 'INSERT INTO likes (user_id, post_id, created_at) VALUES (:user_id, :post_id, :created_at)'
             );
@@ -57,13 +55,11 @@ class LikeRepository
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
-            // Update post likes count
             $stmt = $conn->prepare(
                 'UPDATE posts SET likes_count = likes_count + 1 WHERE id = :post_id'
             );
             $stmt->execute(['post_id' => $postId]);
 
-            // Commit transaction
             $conn->commit();
 
             $logger->info("Post liked successfully", [
@@ -73,7 +69,6 @@ class LikeRepository
 
             return true;
         } catch (Exception $e) {
-            // Rollback transaction on error
             if (isset($conn) && $conn->inTransaction()) {
                 $conn->rollBack();
             }
@@ -95,22 +90,18 @@ class LikeRepository
             $db = Database::getInstance();
             $conn = $db->getConnection();
 
-            // Begin transaction
             $conn->beginTransaction();
 
-            // Delete like record
             $stmt = $conn->prepare(
                 'DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id'
             );
             $stmt->execute(['user_id' => $userId, 'post_id' => $postId]);
 
-            // Update post likes count
             $stmt = $conn->prepare(
                 'UPDATE posts SET likes_count = GREATEST(likes_count - 1, 0) WHERE id = :post_id'
             );
             $stmt->execute(['post_id' => $postId]);
 
-            // Commit transaction
             $conn->commit();
 
             $logger->info("Post unliked successfully", [
@@ -120,7 +111,6 @@ class LikeRepository
 
             return true;
         } catch (Exception $e) {
-            // Rollback transaction on error
             if (isset($conn) && $conn->inTransaction()) {
                 $conn->rollBack();
             }
@@ -157,27 +147,6 @@ class LikeRepository
         }
     }
 
-    public static function findById(int $id): ?Like
-    {
-        $logger = Logger::getInstance();
-        $logger->debug("Finding like by ID", ['like_id' => $id]);
-
-        try {
-            $db = Database::getInstance();
-            $stmt = $db->getConnection()->prepare('SELECT * FROM likes WHERE id = :id');
-            $stmt->execute(['id' => $id]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($row) {
-                return self::rowToLike($row);
-            }
-            return null;
-        } catch (Exception $e) {
-            $logger->logException($e, 'Error finding like by ID');
-            return null;
-        }
-    }
-
     public static function countLikesReceivedByUser(int $userId): int
     {
         $logger = Logger::getInstance();
@@ -195,43 +164,6 @@ class LikeRepository
         } catch (Exception $e) {
             $logger->logException($e, 'Error counting likes received by user');
             return 0;
-        }
-    }
-
-    public static function countLikesForPost(int $postId): int
-    {
-        $logger = Logger::getInstance();
-        $logger->debug("Counting likes for post", ['post_id' => $postId]);
-
-        try {
-            $db = Database::getInstance();
-            $stmt = $db->getConnection()->prepare(
-                'SELECT COUNT(*) as count FROM likes WHERE post_id = :post_id'
-            );
-            $stmt->execute(['post_id' => $postId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            return (int) ($row['count'] ?? 0);
-        } catch (Exception $e) {
-            $logger->logException($e, 'Error counting likes for post');
-            return 0;
-        }
-    }
-
-    public static function deleteLikesForPost(int $postId): bool
-    {
-        $logger = Logger::getInstance();
-        $logger->info("Deleting all likes for post", ['post_id' => $postId]);
-
-        try {
-            $db = Database::getInstance();
-            $stmt = $db->getConnection()->prepare(
-                'DELETE FROM likes WHERE post_id = :post_id'
-            );
-            return $stmt->execute(['post_id' => $postId]);
-        } catch (Exception $e) {
-            $logger->logException($e, 'Error deleting likes for post');
-            return false;
         }
     }
 

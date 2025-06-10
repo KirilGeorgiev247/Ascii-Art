@@ -32,35 +32,6 @@ class PostRepository
         }
     }
 
-    public static function fetchRecent(int $limit = 20): array
-    {
-        $logger = Logger::getInstance();
-        $logger->debug("Fetching recent posts", ['limit' => $limit]);
-
-        try {
-            $db = Database::getInstance();
-            $stmt = $db->getConnection()->prepare(
-                'SELECT p.*, u.username FROM posts p 
-                 JOIN users u ON p.user_id = u.id 
-                 WHERE p.visibility = "public" 
-                 ORDER BY p.created_at DESC LIMIT :limit'
-            );
-            $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $posts = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $post = self::rowToPost($row);
-                $post->setUsername($row['username']);
-                $posts[] = $post;
-            }
-            return $posts;
-        } catch (Exception $e) {
-            $logger->logException($e, 'Error fetching recent posts');
-            return [];
-        }
-    }
-
     public static function findByUserId(int $userId): array
     {
         $db = Database::getInstance();
@@ -200,7 +171,6 @@ class PostRepository
             ]);
 
             if ($result) {
-                // Update the object's updatedAt property
                 $post->setUpdatedAt($updatedAt);
             }
 
@@ -230,11 +200,9 @@ class PostRepository
         try {
             $db = Database::getInstance();
 
-            // Delete related likes first
             $stmt = $db->getConnection()->prepare('DELETE FROM likes WHERE post_id = :id');
             $stmt->execute(['id' => $post->getId()]);
 
-            // Delete the post
             $stmt = $db->getConnection()->prepare('DELETE FROM posts WHERE id = :id');
             $result = $stmt->execute(['id' => $post->getId()]);
 
@@ -243,58 +211,6 @@ class PostRepository
             $logger->logException($e, 'Post deletion failed');
             return false;
         }
-    }
-
-    public static function incrementLikes(Post $post): bool
-    {
-        if ($post->getId() === null) {
-            $logger = Logger::getInstance();
-            $logger->error("Attempted to increment likes for post with null ID");
-            return false;
-        }
-
-        $logger = Logger::getInstance();
-        $logger->debug("Incrementing likes for post", [
-            'post_id' => $post->getId(),
-            'current_likes' => $post->getLikesCount()
-        ]);
-
-        try {
-            $db = Database::getInstance();
-            $stmt = $db->getConnection()->prepare('UPDATE posts SET likes_count = likes_count + 1 WHERE id = :id');
-            $success = $stmt->execute(['id' => $post->getId()]);
-
-            if ($success) {
-                // Update the object's likesCount property
-                $reflection = new \ReflectionClass($post);
-                $property = $reflection->getProperty('likesCount');
-                $property->setAccessible(true);
-                $property->setValue($post, $post->getLikesCount() + 1);
-            }
-
-            return $success;
-        } catch (Exception $e) {
-            $logger->logException($e, 'Error incrementing post likes');
-            return false;
-        }
-    }
-
-    private static function rowToPost(array $row): Post
-    {
-        return new Post(
-            (int) $row['id'],
-            (int) $row['user_id'],
-            $row['title'],
-            $row['content'],
-            $row['type'],
-            $row['image_path'] ?? null,
-            $row['ascii_content'] ?? null,
-            $row['visibility'],
-            (int) $row['likes_count'],
-            $row['created_at'],
-            $row['updated_at'],
-            $row['username'] ?? null
-        );
     }
 
     public static function searchByQuery(string $query, int $limit = 50): array

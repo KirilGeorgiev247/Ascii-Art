@@ -6,7 +6,7 @@ use App\model\User;
 use App\service\logger\Logger;
 
 class AuthController
-{    
+{
     public function showLogin()
     {
         $logger = Logger::getInstance();
@@ -14,7 +14,7 @@ class AuthController
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
         ]);
-        
+
         $viewPath = dirname(dirname(__DIR__)) . '/views/auth/login/login.php';
         require_once $viewPath;
     }
@@ -26,30 +26,29 @@ class AuthController
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
         ]);
-        
+
         $viewPath = dirname(dirname(__DIR__)) . '/views/auth/register/register.php';
         require_once $viewPath;
-    }    
-    
+    }
+
     public function login()
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/login');
-        // TODO: check if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
-            
+
             $logger->info("Login attempt", [
                 'email' => $email,
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
-            
+
             if (empty($email) || empty($password)) {
                 $logger->warning("Login failed - missing credentials", ['email' => $email]);
                 $error = 'Email and password are required.';
@@ -60,12 +59,12 @@ class AuthController
                         $_SESSION['user_id'] = $user->getId();
                         $logger->logAuth('login', $user->getUsername(), true);
                         $logger->logSession('started', $user->getId());
-                        
+
                         $logger->info("Login successful, redirecting to feed", [
                             'user_id' => $user->getId(),
                             'username' => $user->getUsername()
                         ]);
-                        
+
                         header('Location: /feed');
                         exit;
                     } else {
@@ -78,36 +77,35 @@ class AuthController
                 }
             }
         }
-        
+
         if ($error) {
             $logger->warning("Login page displayed with error", ['error' => $error]);
         }
-        
+
         require __DIR__ . '/../../views/auth/login/login.php';
-    }    
-    
+    }
+
     public function register()
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/register');
-        // TODO: check if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'] ?? '';
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
             $confirm = $_POST['confirm'] ?? '';
-            
+
             $logger->info("Registration attempt", [
                 'username' => $username,
                 'email' => $email,
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
-            
+
             if (empty($username) || empty($email) || empty($password)) {
                 $logger->warning("Registration failed - missing required fields", [
                     'username' => $username,
@@ -131,7 +129,7 @@ class AuthController
                     } else {
                         $user = User::create($username, $email, $password);
                         $_SESSION['user_id'] = $user->getId();
-                        
+
                         $logger->logAuth('register', $username, true);
                         $logger->logSession('started', $user->getId());
                         $logger->info("Registration successful, redirecting to feed", [
@@ -139,7 +137,7 @@ class AuthController
                             'username' => $username,
                             'email' => $email
                         ]);
-                        
+
                         header('Location: /feed');
                         exit;
                     }
@@ -149,25 +147,24 @@ class AuthController
                 }
             }
         }
-        
+
         if ($error) {
             $logger->warning("Registration page displayed with error", ['error' => $error]);
         }
-        
+
         require __DIR__ . '/../../views/auth/register/register.php';
-    }    
-    
+    }
+
     public function logout()
     {
         $logger = Logger::getInstance();
         $logger->logRequest($_SERVER['REQUEST_METHOD'], '/logout');
-        // TODO: check if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         $userId = $_SESSION['user_id'] ?? null;
-        
+
         if ($userId) {
             $logger->logAuth('logout', $userId, true);
             $logger->logSession('ended', $userId);
@@ -175,9 +172,9 @@ class AuthController
         } else {
             $logger->warning("Logout attempted with no active session");
         }
-        
+
         session_destroy();
-        
+
         $logger->info("Redirecting to home page after logout");
         header('Location: /');
         exit;
