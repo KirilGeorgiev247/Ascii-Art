@@ -3,6 +3,7 @@
     "description": "Ascii Art PHP Project",
     "type": "project",
     "require": {
+        "cboden/ratchet": "^0.4.4"
     },
     "autoload": {
         "psr-4": {
@@ -23,6 +24,7 @@
     "minimum-stability": "stable",
     "license": "MIT",
     "scripts": {
-        "start": "php -S localhost:8000 -t public & php src/socket/chat-server.php"
+        "start:mac": "php -S localhost:8000 -t public & php src/socket/chat-server.php",
+        "start:win": "start /B php -S localhost:8000 -t public && php src/socket/chat-server.php"
     }
 }
